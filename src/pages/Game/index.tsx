@@ -5,15 +5,15 @@ import React, { FC } from 'react';
 import styles from '@pages/Game/Game.module.scss';
 
 // components
+import Aside from '@components/Aside';
 import Dashboard from '@components/Dashboard';
-import Helper from '@components/Helper';
 
 export type Props = {};
 
 const Game: FC<Props> = () => (
   <div className={styles.root}>
     <Dashboard />
-    <Helper />
+    <Aside />
   </div>
 );
 

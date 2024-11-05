@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 
 // styles
-import styles from '@components/Helper/Helper.module.scss';
+import styles from '@components/Aside/Aside.module.scss';
 
 // store
 import useStore from '@store/index';
@@ -13,7 +13,7 @@ import Symbol from '@components/Symbol';
 
 export type Props = {};
 
-const Helper: FC<Props> = () => {
+const Aside: FC<Props> = () => {
   const reset = useStore(state => state.reset);
   const turnSymbol = useStore(state => state.turnSymbol);
   const isFinished = useStore(state => state.isFinished);
@@ -24,7 +24,7 @@ const Helper: FC<Props> = () => {
   const nextTurn = useStore(state => state.nextTurn);
 
   return (
-    <div className={styles.root}>
+    <aside className={styles.root}>
       <div className={styles.turn}>
         {!isFinished ? (
           <>
@@ -59,8 +59,8 @@ const Helper: FC<Props> = () => {
         <Button disabled={history.length === 0} onClick={() => reset()}>Заново</Button>
         <Button disabled={turnCount === maxTurnCount} onClick={nextTurn}>Вперёд</Button>
       </div>
-    </div>
+    </aside>
   );
 };
 
-export default Helper;
+export default Aside;
