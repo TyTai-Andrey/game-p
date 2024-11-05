@@ -7,4 +7,9 @@
   height: calc(100dvh - 70px - 40px);
 
   border: 1px solid black;
+
+  @media (max-width: 1150px) {
+    height: auto;
+    width: 100%;
+  }
 }

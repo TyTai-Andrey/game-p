@@ -1,3 +1,7 @@
 .root {
   display: flex;
+
+  @media (max-width: 1150px) {
+    flex-direction: column;
+  }
 }

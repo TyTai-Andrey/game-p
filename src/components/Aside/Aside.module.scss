@@ -7,6 +7,10 @@
   flex-direction: column;
   align-items: center;
 
+  @media (max-width: 1150px) {
+    padding: 20px;
+  }
+
   .history, .turn {
     background-color: rgba(89, 253, 253, 0.685);
     border-radius: 1em;
