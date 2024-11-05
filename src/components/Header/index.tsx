@@ -10,11 +10,11 @@ import styles from '@components/Header/Header.module.scss';
 const items = [
   {
     path: '/',
-    text: 'Настройки',
+    text: 'Игра',
   },
   {
-    path: '/game',
-    text: 'Игра',
+    path: '/settings',
+    text: 'Настройки',
   },
 ];
 

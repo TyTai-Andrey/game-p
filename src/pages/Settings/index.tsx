@@ -51,7 +51,7 @@ const Settings: FC<Props> = () => {
       return;
     }
     setSettings(values);
-    navigate('/game');
+    navigate('/');
   };
 
   return (

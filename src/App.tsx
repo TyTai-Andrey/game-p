@@ -13,8 +13,8 @@ function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route element={<Settings />} path="/" />
-        <Route element={<Game />} path="/game" />
+        <Route element={<Game />} path="/" />
+        <Route element={<Settings />} path="/settings" />
       </Route>
     </Routes>
   );
