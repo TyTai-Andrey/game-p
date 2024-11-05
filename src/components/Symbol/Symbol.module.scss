@@ -1,0 +1,11 @@
+.root {
+  font-size: 2em;
+  
+  &.X {
+    color: rgb(222, 64, 236);
+  }
+
+  &.O {
+    color: rgb(72, 72, 247);
+  }
+}

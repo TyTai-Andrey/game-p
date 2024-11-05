@@ -1,0 +1,118 @@
+
+.root {
+    &.focused {
+        .control {
+            &::after {
+                border-bottom: 1px solid black;
+                transform: scaleX(150);
+            }
+        }
+    }
+
+    &.disabled {
+        .label {
+            color: grey;
+        }
+    }
+
+    &.failed {
+        &.errorBackgroundColorRed {
+            .control {
+                background-color: rgba(237, 29, 63, 0.05);
+            }
+        }
+        .label {
+            color: red;
+        }
+
+        .control {
+            &::after {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 12px;
+    background-color: rgb(243, 243, 243);
+    border-radius: 6px;
+    cursor: text;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        border-bottom: 1px solid;
+        content: '';
+        display: block;
+        margin: 0 auto;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: scaleX(0);
+        transition: all 0.4s;
+        width: 1%;
+    }
+}
+
+.prefix {
+    margin: 0 12px 0 0;
+}
+
+.suffix {
+    margin: 0 0 0 12px;
+}
+
+.wrapper {
+    width: 100%;
+    &.isLabel {
+        width: 100%;
+        position: relative;
+        padding-top: 22px - 12px;
+        height: calc(100% - 7px);
+
+        @media (max-width: 990px) {
+            padding-top: 0;
+        }
+    }
+}
+
+.label {
+    font-size: 1em;
+    line-height: 20px;
+    font-weight: 400;
+    color: grey;
+    top: 12px;
+    transform: translateY(-50%);
+    position: absolute;
+    transform-origin: top left;
+    transition: color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+        transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+
+    &.focused {
+        transform: translateY(-20px) scale(0.75);
+    }
+
+    @media (max-width: 990px) {
+        display: none;
+    }
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+.error {
+    margin-top: 8px;
+
+    display: inline-flex;
+
+    font-size: 1em;
+    line-height: 14px;
+    font-weight: 400;
+    color: red;
+}

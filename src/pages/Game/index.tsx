@@ -1,14 +1,20 @@
+// react
 import React, { FC } from 'react';
-import styles from './Game.module.scss'
 
-export type Props = {
+// styles
+import styles from '@pages/Game/Game.module.scss';
 
-}
+// components
+import Dashboard from '@components/Dashboard';
+import Helper from '@components/Helper';
 
-const Game: FC<Props> = (props) => {
-  return <div className={styles.root} {...props}>
-    Game component is mounted!
-  </div>;
-};
+export type Props = {};
+
+const Game: FC<Props> = () => (
+  <div className={styles.root}>
+    <Dashboard />
+    <Helper />
+  </div>
+);
 
 export default Game;

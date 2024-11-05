@@ -1,0 +1,23 @@
+.root {
+  position: relative;
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+
+  font-size: 2em;
+
+  background-color: aquamarine;
+
+  &:nth-child(2n) {
+    background-color: rgb(236, 247, 91);
+  }
+
+  .cellIndex {
+    position: absolute;
+    color: rgba(128, 128, 128, 0.24);
+    font-size: 2em;
+  }
+}

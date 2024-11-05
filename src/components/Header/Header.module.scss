@@ -1,0 +1,36 @@
+.root {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: aqua;
+
+  
+  .list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    list-style: none;
+
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin: 0 10px;
+
+      
+      .link {
+        font-size: 1.5em;
+        text-decoration: none;
+
+        &.active {
+          color: rgb(255, 174, 0);
+        }
+      }
+    }
+  }
+}
