@@ -1,10 +1,11 @@
 // react
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // components
 import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
+import Form from '@components/Form';
 import Input from '@components/Input';
 
 // styles
@@ -14,48 +15,55 @@ import styles from '@pages/Settings/Settings.module.scss';
 import { SettingsState } from '@store/types/settings';
 import useStore from '@store/index';
 
+// utils
+import makeFormStore from '@utils/makeFormStore';
+
 type Props = {};
+
+const useForm = makeFormStore({
+  dashboardSize: {
+    defaultValidators: ['required'],
+    max: 9,
+    min: 3,
+    valueType: 'number',
+  },
+  unfairPlay: { defaultValidators: ['required'], valueType: 'boolean' },
+});
 
 const Settings: FC<Props> = () => {
   const navigate = useNavigate();
 
   const setSettings = useStore(state => state.setSettings);
   const initDashboardSize = useStore(state => state.dashboardSize);
-  const [errors, setErrors] = useState<Partial<Record<keyof SettingsState, string | boolean>>>({});
-  const [values, setValues] = useState<Pick<SettingsState, 'dashboardSize' | 'unfairPlay'>>({
-    dashboardSize: initDashboardSize,
-    unfairPlay: false,
-  });
+
+  const isValid = useForm(state => state.isValid);
+  const values = useForm(state => state.values);
+  const errors = useForm(state => state.errors);
+  const setValues = useForm(state => state.setValues);
+
+  useEffect(() => {
+    setValues({ dashboardSize: initDashboardSize });
+  }, [initDashboardSize]);
 
   const onChangeNumberValues = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
-    setValues(prev => ({
-      ...prev,
-      [e.target.name]: value,
-    }));
+    setValues({ [e.target.name]: value });
   };
 
   const onChangeCheckbox = (value: boolean) => {
-    setValues(prev => ({
-      ...prev,
-      unfairPlay: value,
-    }));
+    setValues({ unfairPlay: value });
   };
 
-  const onClick = () => {
-    const dashboardSizeError = ((values.dashboardSize < 3) ||
-      (values.dashboardSize > 10)) &&
-      'Размер доски должен быть от 3 до 9';
-    if (dashboardSizeError) {
-      setErrors({ dashboardSize: dashboardSizeError });
-      return;
+  const onSubmit = (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    if (isValid) {
+      setSettings(values as SettingsState);
+      navigate('/');
     }
-    setSettings(values);
-    navigate('/');
   };
 
   return (
-    <div className={styles.root}>
+    <Form className={styles.root} onSubmit={onSubmit}>
       <Input
         error={errors.dashboardSize}
         label="Размер доски"
@@ -71,8 +79,8 @@ const Settings: FC<Props> = () => {
           onChange={onChangeCheckbox}
         />
       </div>
-      <Button onClick={onClick}>Начать игру</Button>
-    </div>
+      <Button onClick={onSubmit}>Начать игру</Button>
+    </Form>
   );
 };
 

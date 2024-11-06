@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 // constants
 import { defaultErrorsForm, defaultValuesForm } from '@constants/form';
-import { isBoolean } from './type-operations';
+import { isBoolean, isNumber } from './type-operations';
 
 type DefaultValidators = 'required';
 
@@ -11,6 +11,8 @@ type FieldValue = string | number | boolean;
 type SettingsValue = {
   defaultValidators?: DefaultValidators[];
   valueType: 'string' | 'boolean' | 'number';
+  min?: number;
+  max?: number;
 };
 
 type Settings<T extends string = string> = {
@@ -29,7 +31,8 @@ const _validateForm = <T extends string>(
     if (
       settings[key]?.defaultValidators?.includes('required') &&
       !element &&
-      !isBoolean(element)
+      !isBoolean(element) &&
+      !isNumber(element)
     ) {
       errors[key] = 'Поле обязательно для заполнения';
     } else if (
@@ -37,12 +40,20 @@ const _validateForm = <T extends string>(
       Object.keys(defaultErrorsForm).includes(settings[key].valueType)
     ) {
       errors[key] = defaultErrorsForm[settings[key].valueType];
+    } else if (
+      isNumber(element) &&
+      ((element < (settings?.[key]?.min ?? -Infinity)) ||
+        (element > (settings?.[key]?.max ?? Infinity)))
+    ) {
+      const hasMin = settings?.[key]?.min ? ` от ${settings[key].min}` : '';
+      const hasMax = settings?.[key]?.max ? ` до ${settings[key].max}` : '';
+      errors[key] = `Значение должно быть${hasMin}${hasMax}`;
     } else {
       delete errors[key];
     }
   }
 
-  return { errors, isValid: !!Object.keys(errors).length };
+  return { errors, isValid: !Object.keys(errors).length };
 };
 
 const _createValues = <T extends string>(settings: Settings<T>) => {

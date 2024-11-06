@@ -1,4 +1,4 @@
-const isNumber = (value: any): boolean => typeof value === 'number';
-const isBoolean = (value: any): boolean => typeof value === 'boolean';
+const isNumber = (value: any): value is number => typeof value === 'number';
+const isBoolean = (value: any): value is boolean => typeof value === 'boolean';
 
 export { isBoolean, isNumber };

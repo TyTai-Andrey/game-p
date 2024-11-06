@@ -53,6 +53,7 @@
     "no-param-reassign": "off",
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/naming-convention": "off",
+    "react-hooks/exhaustive-deps": "off",
     "guard-for-in": "off",
     "no-restricted-syntax": "off",
     "jsx-a11y/alt-text": "error",
