@@ -21,10 +21,7 @@
   },
   "plugins": [
     "react",
-    "@getify/proper-ternary",
-    "sort-keys",
-    "sort-destructure-keys",
-    "sort-exports"
+    "@getify/proper-ternary"
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
@@ -53,7 +50,7 @@
     "no-param-reassign": "off",
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/naming-convention": "off",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "guard-for-in": "off",
     "no-restricted-syntax": "off",
     "jsx-a11y/alt-text": "error",
@@ -157,22 +154,6 @@
     "react/jsx-props-no-spreading": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
-    "sort-keys": "off",
-    "sort-keys/sort-keys-fix": [
-      "error",
-      "asc",
-      {
-        "caseSensitive": false,
-        "natural": false,
-        "minKeys": 2
-      }
-    ],
-    "sort-destructure-keys/sort-destructure-keys": [
-      2,
-      {
-        "caseSensitive": false
-      }
-    ],
     "object-curly-newline": "off",
     "@typescript-eslint/ban-ts-comment": "warn",
     "sort-imports": [
@@ -185,12 +166,6 @@
       "error",
       {
         "ignoreCase": false
-      }
-    ],
-    "sort-exports/sort-exports": [
-      "error",
-      {
-        "sortDir": "asc"
       }
     ]
   }
