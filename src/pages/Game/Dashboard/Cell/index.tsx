@@ -1,3 +1,6 @@
+// vendor imports
+import { useShallow } from 'zustand/react/shallow';
+
 // react
 import React, { FC } from 'react';
 
@@ -16,13 +19,14 @@ export type Props = {
 };
 
 const Cell: FC<Props> = ({ cellIndex, symbol }) => {
-  const turnSymbol = useStore(state => state.turnSymbol);
-  const unfairPlay = useStore(state => state.unfairPlay);
-  const isFinished = useStore(state => state.isFinished);
-  const maxTurnCount = useStore(state => state.maxTurnCount);
-  const turnCount = useStore(state => state.turnCount);
-
   const setPosition = useStore(state => state.setPosition);
+
+  const isFinished = useStore(state => state.isFinished);
+  const unfairPlay = useStore(state => state.unfairPlay);
+
+  const { maxTurnCount, turnCount, turnSymbol } = useStore(useShallow(
+    ({ maxTurnCount, turnCount, turnSymbol }) => ({ maxTurnCount, turnCount, turnSymbol }),
+  ));
 
   const onClick = () => {
     if (isFinished) return;

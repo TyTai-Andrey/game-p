@@ -1,3 +1,6 @@
+// vendor imports
+import { useShallow } from 'zustand/react/shallow';
+
 // react
 import React, { FC } from 'react';
 
@@ -15,8 +18,9 @@ export type Props = {
 };
 
 const Dashboard: FC<Props> = () => {
-  const position = useStore(state => state.position);
-  const dashboardSize = useStore(state => state.dashboardSize);
+  const { dashboardSize, position } = useStore(useShallow(
+    ({ dashboardSize, position }) => ({ dashboardSize, position }),
+  ));
 
   return (
     <div

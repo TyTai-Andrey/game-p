@@ -1,3 +1,6 @@
+// vendor imports
+import { useShallow } from 'zustand/react/shallow';
+
 // react
 import React, { FC } from 'react';
 
@@ -14,14 +17,16 @@ import Symbol from '@components/Symbol';
 export type Props = {};
 
 const Aside: FC<Props> = () => {
-  const reset = useStore(state => state.reset);
-  const turnSymbol = useStore(state => state.turnSymbol);
   const isFinished = useStore(state => state.isFinished);
-  const maxTurnCount = useStore(state => state.maxTurnCount);
-  const turnCount = useStore(state => state.turnCount);
   const history = useStore(state => state.history);
-  const prevTurn = useStore(state => state.prevTurn);
-  const nextTurn = useStore(state => state.nextTurn);
+
+  const { maxTurnCount, turnCount, turnSymbol } = useStore(useShallow(
+    ({ maxTurnCount, turnCount, turnSymbol }) => ({ maxTurnCount, turnCount, turnSymbol }),
+  ));
+
+  const { nextTurn, prevTurn, reset } = useStore(useShallow(
+    ({ nextTurn, prevTurn, reset }) => ({ nextTurn, prevTurn, reset }),
+  ));
 
   return (
     <aside className={styles.root}>

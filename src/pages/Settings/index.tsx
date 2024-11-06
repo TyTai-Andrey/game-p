@@ -1,7 +1,9 @@
+// vendor imports
+import { useShallow } from 'zustand/react/shallow';
+
 // react
 import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 // components
 import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
@@ -32,14 +34,12 @@ const useForm = makeFormStore({
 
 const Settings: FC<Props> = () => {
   const navigate = useNavigate();
-
-  const setSettings = useStore(state => state.setSettings);
-  const initDashboardSize = useStore(state => state.dashboardSize);
-
-  const isValid = useForm(state => state.isValid);
-  const values = useForm(state => state.values);
-  const errors = useForm(state => state.errors);
-  const setValues = useForm(state => state.setValues);
+  const { errors, isValid, setValues, values } = useForm(useShallow(
+    ({ errors, isValid, setValues, values }) => ({ errors, isValid, setValues, values }),
+  ));
+  const { dashboardSize: initDashboardSize, setSettings } = useStore(useShallow(
+    ({ dashboardSize, setSettings }) => ({ dashboardSize, setSettings }),
+  ));
 
   useEffect(() => {
     setValues({ dashboardSize: initDashboardSize });
