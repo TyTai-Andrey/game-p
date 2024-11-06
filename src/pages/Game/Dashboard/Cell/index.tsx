@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 
 // styles
-import styles from '@components/Dashboard/Cell/Cell.module.scss';
+import styles from '@pages/Game/Dashboard/Cell/Cell.module.scss';
 
 // store
 import useStore from '@store/index';

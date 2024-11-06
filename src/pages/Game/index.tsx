@@ -5,8 +5,8 @@ import React, { FC } from 'react';
 import styles from '@pages/Game/Game.module.scss';
 
 // components
-import Aside from '@components/Aside';
-import Dashboard from '@components/Dashboard';
+import Aside from '@pages/Game/Aside';
+import Dashboard from '@pages/Game/Dashboard';
 
 export type Props = {};
 

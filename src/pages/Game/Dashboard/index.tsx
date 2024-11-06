@@ -2,10 +2,10 @@
 import React, { FC } from 'react';
 
 // styles
-import styles from '@components/Dashboard/Dashboard.module.scss';
+import styles from '@pages/Game/Dashboard/Dashboard.module.scss';
 
 // components
-import Cell from '@components/Dashboard/Cell';
+import Cell from '@pages/Game/Dashboard/Cell';
 
 // store
 import useStore from '@store/index';

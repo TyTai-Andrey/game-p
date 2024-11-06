@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 
 // styles
-import styles from '@components/Aside/Aside.module.scss';
+import styles from '@pages/Game/Aside/Aside.module.scss';
 
 // store
 import useStore from '@store/index';
