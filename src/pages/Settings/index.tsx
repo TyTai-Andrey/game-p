@@ -39,28 +39,22 @@ const Settings: FC<Props> = () => {
   const { errors, isValid, setValues, values } = useForm(useShallow(
     ({ errors, isValid, setValues, values }) => ({ errors, isValid, setValues, values }),
   ));
-  const {
-    dashboardSize: initDashboardSize,
-    setSettings,
-    itemsForWin: initItemsForWin,
-  } = useStore(useShallow(
+  const setSettings = useStore(state => state.setSettings);
+  const initFormValues = useStore(useShallow(
     ({
       dashboardSize,
-      setSettings,
       itemsForWin,
+      unfairPlay,
     }) => ({
       dashboardSize,
-      setSettings,
       itemsForWin,
+      unfairPlay,
     }),
   ));
 
   useEffect(() => {
-    setValues({
-      dashboardSize: initDashboardSize,
-      itemsForWin: initItemsForWin,
-    });
-  }, [initDashboardSize, initItemsForWin]);
+    setValues(initFormValues);
+  }, [initFormValues]);
 
   const onChangeItemsForWin = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -116,6 +110,7 @@ const Settings: FC<Props> = () => {
       />
       <div>
         <Checkbox
+          defaultChecked={Boolean(values.unfairPlay)}
           error={errors.unfairPlay}
           label="Нечестная игра (позволяет ставить фигуру на фигуру противника)"
           onChange={onChangeCheckbox}
