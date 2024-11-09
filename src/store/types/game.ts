@@ -1,6 +1,7 @@
 type GameState = {
   turnSymbol: 'X' | 'O',
   isFinished: null | 'X' | 'O',
+  finishedIndexes: number[] | null,
   turnCount: number,
   maxTurnCount: number,
   position: string,

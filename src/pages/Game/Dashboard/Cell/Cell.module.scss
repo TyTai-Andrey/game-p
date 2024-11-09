@@ -9,10 +9,16 @@
 
   font-size: 2em;
 
+  transition: background-color 0.2s ease;
+
   background-color: aquamarine;
 
   &:nth-child(2n) {
     background-color: rgb(236, 247, 91);
+  }
+
+  &.highlighted {
+    background-color: #ffa8fd;
   }
 
   .cellIndex {

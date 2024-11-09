@@ -10,6 +10,7 @@ type CreateGameSlice = CreateSlice<GameState & GameAction>;
 const initGameState: GameState = {
   history: [],
   isFinished: null,
+  finishedIndexes: null,
   maxTurnCount: -1,
   position: '_________',
   turnCount: -1,
@@ -20,6 +21,7 @@ const createGameSlice: CreateGameSlice = set => ({
   history: [],
   isFinished: null,
   maxTurnCount: -1,
+  finishedIndexes: null,
   nextTurn: () => set(({
     history, maxTurnCount, turnCount,
   }) => {
@@ -73,17 +75,19 @@ const createGameSlice: CreateGameSlice = set => ({
     }) => {
       const newPosition = position.slice(0, cellIndex) + turnSymbol + position.slice(cellIndex + 1);
       const turnCount = history.length;
-      const isFinished = isFinish({
+      const finishedIndexes = isFinish({
         position: newPosition,
         itemsForWin,
         symbol: turnSymbol,
-      }) as null | 'X' | 'O';
+      });
+
       const symbol = turnSymbol === 'X' ? 'O' : 'X';
       return ({
         history: [...history, {
           cellIndex, position: newPosition, turnCount, turnSymbol: symbol,
         }],
-        isFinished,
+        isFinished: finishedIndexes ? turnSymbol : null,
+        finishedIndexes,
         maxTurnCount: turnCount,
         position: newPosition,
         turnCount,

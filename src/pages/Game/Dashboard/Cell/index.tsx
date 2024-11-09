@@ -12,13 +12,15 @@ import useStore from '@store/index';
 
 // components
 import Symbol from '@components/Symbol';
+import classNames from 'classnames';
 
 export type Props = {
   symbol: 'X' | 'O' | '_';
   cellIndex: number;
+  highlighted?: boolean;
 };
 
-const Cell: FC<Props> = ({ cellIndex, symbol }) => {
+const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
   const setPosition = useStore(state => state.setPosition);
 
   const isFinished = useStore(state => state.isFinished);
@@ -37,7 +39,12 @@ const Cell: FC<Props> = ({ cellIndex, symbol }) => {
   };
 
   return (
-    <div className={styles.root} onClick={onClick}>
+    <div
+      className={classNames(styles.root, {
+        [styles.highlighted]: maxTurnCount === turnCount && highlighted,
+      })}
+      onClick={onClick}
+    >
       <Symbol symbol={symbol} />
       <div className={styles.cellIndex}>{cellIndex + 1}</div>
     </div>

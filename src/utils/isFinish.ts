@@ -1,6 +1,15 @@
-const checkRowOnFinish = (diagonal: string[], countForWin: number, symbol: 'X' | 'O') => {
-  if (diagonal.join('').includes(new Array(countForWin).fill(symbol).join(''))) {
-    return symbol;
+// utils
+import slice from '@utils/array-operations';
+
+const checkRowOnFinish = (diagonal: string[], countForWin: number, symbol: 'X' | 'O'): [number, number] | undefined => {
+  const row = diagonal.join('');
+  const winRow = new Array(countForWin).fill(symbol).join('');
+
+  if (row.includes(winRow)) {
+    const indexStart = row.indexOf(winRow);
+    const allegedIndexEnd = indexStart + winRow.length;
+    const indexEnd = slice(diagonal, allegedIndexEnd).reduce((num, item) => (item === symbol ? num + 1 : num), allegedIndexEnd);
+    return [indexStart, indexEnd];
   }
 };
 
@@ -14,7 +23,7 @@ type CheckDiagonalByDirection = {
   itemsForWin: number
 };
 
-const checkDiagonalByDirection = (props: CheckDiagonalByDirection): string | null => {
+const checkDiagonalByDirection = (props: CheckDiagonalByDirection): number[] | null => {
   const {
     symbolsArray,
     direction,
@@ -28,6 +37,8 @@ const checkDiagonalByDirection = (props: CheckDiagonalByDirection): string | nul
   const isStartLeftCol = ['↘', '↗'].includes(direction);
   const startDiagonalIndex = prevDiagonalIndex ?? (isStartTopRow ? 0 : symbolsArray.length);
   const diagonalLength = getDiagonalLength({ ...props, startDiagonalIndex });
+
+  const isFinishByDiagonalIndexes: number[] = [];
   let diagonalCurrentIndex = startDiagonalIndex + (isStartTopRow ? 0 : -1);
 
   const diagonal = symbolsArray[isStartTopRow ? 'reduce' : 'reduceRight']((acc: string[], symbol, index) => {
@@ -36,13 +47,15 @@ const checkDiagonalByDirection = (props: CheckDiagonalByDirection): string | nul
       const bottomStep = -(rowsCount + (isStartLeftCol ? -1 : 1));
       diagonalCurrentIndex += (isStartTopRow ? topStep : bottomStep);
       acc.push(symbol);
+      isFinishByDiagonalIndexes.push(index);
     }
 
     return acc;
   }, []);
 
-  const isFinish = checkRowOnFinish(diagonal, itemsForWin, symbol);
-  if (isFinish) return isFinish;
+  const isFinishedIndexes = checkRowOnFinish(diagonal, itemsForWin, symbol);
+
+  if (isFinishedIndexes) return slice(isFinishByDiagonalIndexes, ...isFinishedIndexes);
 
   const newStartDiagonalIndex = startDiagonalIndex + (isStartTopRow ? 1 : -1);
   const findOtherDiagonal = isStartTopRow ?
@@ -123,7 +136,7 @@ const isFinish = ({
   position,
   itemsForWin,
   symbol,
-}: IsFinishProps): string | null => {
+}: IsFinishProps): number[] | null => {
   const { length } = position;
   const rowsCount = Math.sqrt(length);
   const colsCount = Math.sqrt(length);
@@ -134,7 +147,13 @@ const isFinish = ({
     const row = symbolsArray.slice(i * rowsCount, i * rowsCount + rowsCount);
 
     const isFinish = checkRowOnFinish(row, itemsForWin, symbol);
-    if (isFinish) return isFinish;
+    if (isFinish) {
+      const isFinishByDiagonalIndexes = symbolsArray.map(
+        (_, index) => ((index >= i * rowsCount) && (index < (i * rowsCount + rowsCount)) ? index : null),
+      ).filter(i => i !== null);
+
+      return slice(isFinishByDiagonalIndexes, ...isFinish);
+    }
   }
 
   // check columns
@@ -142,7 +161,13 @@ const isFinish = ({
     const col = symbolsArray.filter((_, index) => index % colsCount === i);
 
     const isFinish = checkRowOnFinish(col, itemsForWin, symbol);
-    if (isFinish) return isFinish;
+    if (isFinish) {
+      const isFinishByDiagonalIndexes = symbolsArray.map(
+        (_, index) => ((index % colsCount === i) ? index : null),
+      ).filter(i => i !== null);
+
+      return slice(isFinishByDiagonalIndexes, ...isFinish);
+    }
   }
 
   // check diagonals
@@ -152,6 +177,7 @@ const isFinish = ({
     symbol,
     itemsForWin,
   });
+
   if (isFinishByDiagonal) return isFinishByDiagonal;
 
   return null;

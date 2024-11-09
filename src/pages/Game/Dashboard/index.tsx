@@ -18,8 +18,20 @@ export type Props = {
 };
 
 const Dashboard: FC<Props> = () => {
-  const { dashboardSize, position } = useStore(useShallow(
-    ({ dashboardSize, position }) => ({ dashboardSize, position }),
+  const {
+    dashboardSize,
+    position,
+    finishedIndexes,
+  } = useStore(useShallow(
+    ({
+      dashboardSize,
+      position,
+      finishedIndexes,
+    }) => ({
+      dashboardSize,
+      position,
+      finishedIndexes,
+    }),
   ));
 
   return (
@@ -35,6 +47,7 @@ const Dashboard: FC<Props> = () => {
         .map((symbol, cellIndex) => (
           <Cell
             cellIndex={cellIndex}
+            highlighted={Boolean(finishedIndexes?.includes(cellIndex))}
             // eslint-disable-next-line react/no-array-index-key
             key={`${symbol}_${cellIndex}`}
             symbol={symbol as 'X' | 'O' | '_'}
