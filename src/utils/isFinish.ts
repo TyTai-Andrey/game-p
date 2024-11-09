@@ -1,127 +1,158 @@
-const checkDiagonalOnFinish = (diagonal: string[], count: number) => {
-  if (diagonal.length === count) {
-    if (diagonal.every(symbol => symbol === diagonal[0] && symbol !== '_')) {
-      return diagonal[0];
-    }
+const checkRowOnFinish = (diagonal: string[], countForWin: number, symbol: 'X' | 'O') => {
+  if (diagonal.join('').includes(new Array(countForWin).fill(symbol).join(''))) {
+    return symbol;
   }
 };
 
-type CheckDiagonal = {
+type CheckDiagonalByDirection = {
   rowsCount: number;
-  array: string[]
-  initDiagonalCurrentIndex: number
-  direction: 'leftRight' | 'rightLeft'
-  row?: 'top' | 'bottom'
-  getDiagonalLength: (props: CheckDiagonal) => number
+  symbolsArray: string[]
+  prevDiagonalIndex?: number
+  direction: '↖' | '↗' | '↘' | '↙'
+  getDiagonalLength: (props: CheckDiagonalByDirection & { startDiagonalIndex: number }) => number
+  symbol: 'X' | 'O'
+  itemsForWin: number
 };
 
-const checkDiagonal = (props: CheckDiagonal): string | null => {
+const checkDiagonalByDirection = (props: CheckDiagonalByDirection): string | null => {
   const {
-    array,
+    symbolsArray,
     direction,
     getDiagonalLength,
-    initDiagonalCurrentIndex = 0,
-    row,
+    prevDiagonalIndex,
     rowsCount,
+    symbol,
+    itemsForWin,
   } = props;
-  const isTopRow = row === 'top';
-  let diagonalCurrentIndex = initDiagonalCurrentIndex + (isTopRow ? 0 : -1);
-  const diagonalLength = getDiagonalLength(props);
+  const isStartTopRow = ['↘', '↙'].includes(direction);
+  const isStartLeftCol = ['↘', '↗'].includes(direction);
+  const startDiagonalIndex = prevDiagonalIndex ?? (isStartTopRow ? 0 : symbolsArray.length);
+  const diagonalLength = getDiagonalLength({ ...props, startDiagonalIndex });
+  let diagonalCurrentIndex = startDiagonalIndex + (isStartTopRow ? 0 : -1);
 
-  const diagonal = array[isTopRow ? 'reduce' : 'reduceRight']((acc: string[], symbol, index) => {
+  const diagonal = symbolsArray[isStartTopRow ? 'reduce' : 'reduceRight']((acc: string[], symbol, index) => {
     if ((index === diagonalCurrentIndex) && (acc.length < diagonalLength)) {
-      const topStep = (rowsCount + (direction === 'leftRight' ? 1 : -1));
-      const bottomStep = -(rowsCount + (direction === 'leftRight' ? -1 : 1));
-      diagonalCurrentIndex += (isTopRow ? topStep : bottomStep);
+      const topStep = (rowsCount + (isStartLeftCol ? 1 : -1));
+      const bottomStep = -(rowsCount + (isStartLeftCol ? -1 : 1));
+      diagonalCurrentIndex += (isStartTopRow ? topStep : bottomStep);
       acc.push(symbol);
     }
 
     return acc;
   }, []);
 
-  const isFinish = checkDiagonalOnFinish(diagonal, rowsCount);
+  const isFinish = checkRowOnFinish(diagonal, itemsForWin, symbol);
   if (isFinish) return isFinish;
 
-  const newDiagonalCurrentIndex = initDiagonalCurrentIndex + (isTopRow ? 1 : -1);
-  const findOtherDiagonal = isTopRow ?
-    (newDiagonalCurrentIndex < rowsCount) :
-    (newDiagonalCurrentIndex > (array.length - rowsCount));
+  const newStartDiagonalIndex = startDiagonalIndex + (isStartTopRow ? 1 : -1);
+  const findOtherDiagonal = isStartTopRow ?
+    (newStartDiagonalIndex < rowsCount) :
+    (newStartDiagonalIndex > (symbolsArray.length - rowsCount));
 
   if (findOtherDiagonal) {
-    return checkDiagonal({
+    return checkDiagonalByDirection({
       ...props,
-      initDiagonalCurrentIndex: newDiagonalCurrentIndex,
+      prevDiagonalIndex: newStartDiagonalIndex,
+      symbol,
+      itemsForWin,
     });
   }
 
   return null;
 };
 
-const isFinish = (position = '123456789'): string | null => {
+type CheckAllDiagonalsProps = {
+  symbolsArray: string[]
+  rowsCount: number
+  symbol: 'X' | 'O'
+  itemsForWin: number
+};
+
+const checkAllDiagonals = ({
+  symbolsArray,
+  rowsCount,
+  symbol,
+  itemsForWin,
+}: CheckAllDiagonalsProps) => {
+  const diagonalProps = {
+    symbolsArray,
+    rowsCount,
+    itemsForWin,
+    symbol,
+  };
+
+  const isFinishByTopLeftRightDiagonal = checkDiagonalByDirection({
+    ...diagonalProps,
+    direction: '↘',
+    getDiagonalLength: ({ startDiagonalIndex, rowsCount }) => rowsCount - startDiagonalIndex,
+  });
+
+  if (isFinishByTopLeftRightDiagonal) return isFinishByTopLeftRightDiagonal;
+
+  const isFinishByTopRightLeftDiagonal = checkDiagonalByDirection({
+    ...diagonalProps,
+    direction: '↙',
+    getDiagonalLength: ({ startDiagonalIndex }) => startDiagonalIndex + 1,
+  });
+  if (isFinishByTopRightLeftDiagonal) return isFinishByTopRightLeftDiagonal;
+
+  const isFinishByBottomRightLeftDiagonal = checkDiagonalByDirection({
+    ...diagonalProps,
+    direction: '↖',
+    getDiagonalLength: ({ startDiagonalIndex, rowsCount }) => (startDiagonalIndex % rowsCount) || rowsCount,
+  });
+
+  if (isFinishByBottomRightLeftDiagonal) return isFinishByBottomRightLeftDiagonal;
+
+  const isFinishByBottomLeftRightDiagonal = checkDiagonalByDirection({
+    ...diagonalProps,
+    direction: '↗',
+    getDiagonalLength: ({ symbolsArray, startDiagonalIndex }) => symbolsArray.length - (startDiagonalIndex - 1),
+  });
+
+  if (isFinishByBottomLeftRightDiagonal) return isFinishByBottomLeftRightDiagonal;
+};
+
+type IsFinishProps = {
+  position: string;
+  itemsForWin: number;
+  symbol: 'X' | 'O';
+};
+
+const isFinish = ({
+  position,
+  itemsForWin,
+  symbol,
+}: IsFinishProps): string | null => {
   const { length } = position;
   const rowsCount = Math.sqrt(length);
   const colsCount = Math.sqrt(length);
-  const array = position.split('');
+  const symbolsArray = position.split('');
 
   // check rows
   for (let i = 0; i < rowsCount; i++) {
-    const row = array.slice(i * rowsCount, i * rowsCount + rowsCount);
+    const row = symbolsArray.slice(i * rowsCount, i * rowsCount + rowsCount);
 
-    if (row.every(symbol => symbol === row[0] && symbol !== '_')) {
-      return row[0];
-    }
+    const isFinish = checkRowOnFinish(row, itemsForWin, symbol);
+    if (isFinish) return isFinish;
   }
 
   // check columns
   for (let i = 0; i < colsCount; i++) {
-    const col = array.filter((_, index) => index % colsCount === i);
+    const col = symbolsArray.filter((_, index) => index % colsCount === i);
 
-    if (col.every(symbol => symbol === col[0] && symbol !== '_')) {
-      return col[0];
-    }
+    const isFinish = checkRowOnFinish(col, itemsForWin, symbol);
+    if (isFinish) return isFinish;
   }
 
   // check diagonals
-  const diagonalProps = { array, rowsCount };
-
-  const isFinishTopLeftRightDiagonal = checkDiagonal({
-    ...diagonalProps,
-    direction: 'leftRight',
-    getDiagonalLength: ({ initDiagonalCurrentIndex, rowsCount }) => rowsCount - initDiagonalCurrentIndex,
-    initDiagonalCurrentIndex: 0,
-    row: 'top',
+  const isFinishByDiagonal = checkAllDiagonals({
+    symbolsArray,
+    rowsCount,
+    symbol,
+    itemsForWin,
   });
-
-  if (isFinishTopLeftRightDiagonal) return isFinishTopLeftRightDiagonal;
-
-  const isFinishTopRightLeftDiagonal = checkDiagonal({
-    ...diagonalProps,
-    direction: 'rightLeft',
-    getDiagonalLength: ({ initDiagonalCurrentIndex }) => initDiagonalCurrentIndex + 1,
-    initDiagonalCurrentIndex: 0,
-    row: 'top',
-  });
-  if (isFinishTopRightLeftDiagonal) return isFinishTopRightLeftDiagonal;
-
-  const isFinishBottomRightLeftDiagonal = checkDiagonal({
-    ...diagonalProps,
-    direction: 'rightLeft',
-    getDiagonalLength: ({ initDiagonalCurrentIndex, rowsCount }) => (initDiagonalCurrentIndex % rowsCount) || rowsCount,
-    initDiagonalCurrentIndex: array.length,
-    row: 'bottom',
-  });
-
-  if (isFinishBottomRightLeftDiagonal) return isFinishBottomRightLeftDiagonal;
-
-  const isFinishBottomLeftRightDiagonal = checkDiagonal({
-    ...diagonalProps,
-    direction: 'leftRight',
-    getDiagonalLength: ({ array, initDiagonalCurrentIndex }) => array.length - (initDiagonalCurrentIndex - 1),
-    initDiagonalCurrentIndex: array.length,
-    row: 'bottom',
-  });
-
-  if (isFinishBottomLeftRightDiagonal) return isFinishBottomLeftRightDiagonal;
+  if (isFinishByDiagonal) return isFinishByDiagonal;
 
   return null;
 };

@@ -66,11 +66,18 @@ const createGameSlice: CreateGameSlice = set => ({
   }),
   setPosition: cellIndex => set(
     ({
-      history, position, turnSymbol,
+      history,
+      position,
+      turnSymbol,
+      itemsForWin,
     }) => {
       const newPosition = position.slice(0, cellIndex) + turnSymbol + position.slice(cellIndex + 1);
       const turnCount = history.length;
-      const isFinished = isFinish(newPosition) as null | 'X' | 'O';
+      const isFinished = isFinish({
+        position: newPosition,
+        itemsForWin,
+        symbol: turnSymbol,
+      }) as null | 'X' | 'O';
       const symbol = turnSymbol === 'X' ? 'O' : 'X';
       return ({
         history: [...history, {
