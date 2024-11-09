@@ -1,5 +1,6 @@
 type SettingsState = {
   dashboardSize: number
+  itemsForWin: number
   unfairPlay: boolean
 };
 

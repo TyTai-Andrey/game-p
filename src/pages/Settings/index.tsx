@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 // react
 import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 // components
 import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
@@ -29,6 +30,7 @@ const useForm = makeFormStore({
     min: 3,
     valueType: 'number',
   },
+  itemsForWin: { defaultValidators: ['required'], valueType: 'number' },
   unfairPlay: { defaultValidators: ['required'], valueType: 'boolean' },
 });
 
@@ -37,17 +39,49 @@ const Settings: FC<Props> = () => {
   const { errors, isValid, setValues, values } = useForm(useShallow(
     ({ errors, isValid, setValues, values }) => ({ errors, isValid, setValues, values }),
   ));
-  const { dashboardSize: initDashboardSize, setSettings } = useStore(useShallow(
-    ({ dashboardSize, setSettings }) => ({ dashboardSize, setSettings }),
+  const {
+    dashboardSize: initDashboardSize,
+    setSettings,
+    itemsForWin: initItemsForWin,
+  } = useStore(useShallow(
+    ({
+      dashboardSize,
+      setSettings,
+      itemsForWin,
+    }) => ({
+      dashboardSize,
+      setSettings,
+      itemsForWin,
+    }),
   ));
 
   useEffect(() => {
-    setValues({ dashboardSize: initDashboardSize });
-  }, [initDashboardSize]);
+    setValues({
+      dashboardSize: initDashboardSize,
+      itemsForWin: initItemsForWin,
+    });
+  }, [initDashboardSize, initItemsForWin]);
 
-  const onChangeNumberValues = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeItemsForWin = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
-    setValues({ [e.target.name]: value });
+    const newValues = {
+      itemsForWin: value,
+      ...((Number(values.dashboardSize) < value) ?
+        { dashboardSize: value } :
+        {}),
+    };
+    setValues(newValues);
+  };
+
+  const onChangeDashboardSize = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    const newValues = {
+      dashboardSize: value,
+      ...((Number(values.itemsForWin) > value) ?
+        { itemsForWin: value } :
+        {}),
+    };
+    setValues(newValues);
   };
 
   const onChangeCheckbox = (value: boolean) => {
@@ -68,9 +102,17 @@ const Settings: FC<Props> = () => {
         error={errors.dashboardSize}
         label="Размер доски"
         name="dashboardSize"
-        onChange={onChangeNumberValues}
+        onChange={onChangeDashboardSize}
         type="number"
         value={String(values.dashboardSize)}
+      />
+      <Input
+        error={errors.itemsForWin}
+        label="Символов в ряд для победы"
+        name="itemsForWin"
+        onChange={onChangeItemsForWin}
+        type="number"
+        value={String(values.itemsForWin)}
       />
       <div>
         <Checkbox
