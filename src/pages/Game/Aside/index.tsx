@@ -12,16 +12,16 @@ import useStore from '@store/index';
 
 // components
 import Button from '@components/Button';
+import Info from '@pages/Game/Aside/Info';
 import Symbol from '@components/Symbol';
 
 export type Props = {};
 
 const Aside: FC<Props> = () => {
-  const isFinished = useStore(state => state.isFinished);
   const history = useStore(state => state.history);
 
-  const { maxTurnCount, turnCount, turnSymbol } = useStore(useShallow(
-    ({ maxTurnCount, turnCount, turnSymbol }) => ({ maxTurnCount, turnCount, turnSymbol }),
+  const { maxTurnCount, turnCount } = useStore(useShallow(
+    ({ maxTurnCount, turnCount }) => ({ maxTurnCount, turnCount }),
   ));
 
   const { nextTurn, prevTurn, reset } = useStore(useShallow(
@@ -30,15 +30,7 @@ const Aside: FC<Props> = () => {
 
   return (
     <aside className={styles.root}>
-      <div className={styles.turn}>
-        {!isFinished ? (
-          <>
-            Текущий ход:<Symbol symbol={turnSymbol} />
-          </>
-        ) :
-          <h1>Игра окончена! Победа <Symbol symbol={isFinished} /></h1>}
-      </div>
-
+      <Info />
       <div className={styles.history}>
         <h1>История ходов</h1>
         <div className={styles.historyTurns}>
