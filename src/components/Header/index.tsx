@@ -7,13 +7,16 @@ import { Link, useLocation } from 'react-router-dom';
 // styles
 import styles from '@components/Header/Header.module.scss';
 
+// constants
+import pathnames from '@constants/pathnames';
+
 const items = [
   {
-    path: '/',
+    path: pathnames.main,
     text: 'Игра',
   },
   {
-    path: '/settings',
+    path: pathnames.settings,
     text: 'Настройки',
   },
 ];

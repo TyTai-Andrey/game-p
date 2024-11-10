@@ -1,5 +1,5 @@
 // react
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import React from 'react';
 
 // pages
@@ -9,12 +9,16 @@ import Settings from '@pages/Settings';
 // components
 import Layout from '@components/Layout';
 
+// constants
+import pathnames from '@constants/pathnames';
+
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route element={<Game />} path="/" />
-        <Route element={<Settings />} path="/settings" />
+        <Route element={<Game />} path={pathnames.main} />
+        <Route element={<Settings />} path={pathnames.settings} />
+        <Route element={<Navigate replace to={pathnames.settings} />} path="*" />
       </Route>
     </Routes>
   );

@@ -21,6 +21,9 @@ import useStore from '@store/index';
 // utils
 import makeFormStore from '@utils/makeFormStore';
 
+// constants
+import pathnames from '@constants/pathnames';
+
 type Props = {};
 
 const useForm = makeFormStore({
@@ -86,7 +89,7 @@ const Settings: FC<Props> = () => {
     event.preventDefault();
     if (isValid) {
       setSettings(values as SettingsState);
-      navigate('/');
+      navigate(pathnames.main);
     }
   };
 
