@@ -53,6 +53,7 @@ router.post('/register',
       await user.save();
 
       const { token, refreshToken } = createTokens(user);
+      await User.findOneAndUpdate({ _id: user.id }, { token, refreshToken });
 
       res.json({ token, refreshToken, userId: user.id });
     } catch (error) {
