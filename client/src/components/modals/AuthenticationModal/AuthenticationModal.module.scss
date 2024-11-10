@@ -1,0 +1,18 @@
+.root {
+  min-width: 400px;
+  .form {
+    .input {
+      margin-bottom: 10px;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin: 10px;
+    }
+    .buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

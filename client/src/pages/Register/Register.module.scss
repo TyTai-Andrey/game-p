@@ -1,0 +1,17 @@
+.root {
+  flex-grow: 1;
+  .form {
+    .input {
+      margin-bottom: 10px;
+    }
+    .error {
+      color: red;
+      margin: 10px;
+    }
+    .buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

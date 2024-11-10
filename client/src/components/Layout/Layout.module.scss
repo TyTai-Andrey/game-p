@@ -1,0 +1,13 @@
+.root {
+  min-height: calc(100dvh);
+  min-width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  
+  .section {
+    display: flex;
+    padding: 20px;
+    flex-grow: 1;
+  }
+}
