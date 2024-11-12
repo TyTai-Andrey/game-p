@@ -6,6 +6,8 @@ import config from './config/config.js';
 import routes from './routes/index.js';
 import needAuth from './middleware/auth.js';
 import mongoose from 'mongoose';
+import expressWs from 'express-ws';
+import wsRouters from './ws/index.js';
 
 declare module 'express-session' {
   interface SessionData {
@@ -41,6 +43,9 @@ app.use(
 //   req.session.ID = req.params.id;
 //   return res.redirect('/');
 // });
+
+const appWS = expressWs(app);
+wsRouters(appWS)
 
 
 app.use(needAuth, routes);

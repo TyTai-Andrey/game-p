@@ -1,5 +1,5 @@
 // utils
-import isFinish from '@utils/isFinish';
+import getGameStateByTurn from '@utils/getGameStateByTurn';
 
 // types
 import { GameAction, GameState } from '../types/game';
@@ -66,35 +66,18 @@ const createGameSlice: CreateGameSlice = set => ({
       position: newPosition,
     };
   }),
-  setPosition: cellIndex => set(
-    ({
-      history,
-      position,
-      turnSymbol,
-      itemsForWin,
-    }) => {
-      const newPosition = position.slice(0, cellIndex) + turnSymbol + position.slice(cellIndex + 1);
-      const turnCount = history.length;
-      const finishedIndexes = isFinish({
-        position: newPosition,
-        itemsForWin,
-        symbol: turnSymbol,
-      });
-
-      const symbol = turnSymbol === 'X' ? 'O' : 'X';
-      return ({
-        history: [...history, {
-          cellIndex, position: newPosition, turnCount, turnSymbol: symbol,
-        }],
-        isFinished: finishedIndexes ? turnSymbol : null,
-        finishedIndexes,
-        maxTurnCount: turnCount,
-        position: newPosition,
-        turnCount,
-        turnSymbol: symbol,
-      });
-    },
-  ),
+  setPosition: cellIndex => set(({
+    history,
+    position,
+    turnSymbol,
+    itemsForWin,
+  }) => getGameStateByTurn({
+    history,
+    position,
+    turnSymbol,
+    itemsForWin,
+    cellIndex,
+  })),
   turnCount: -1,
   turnSymbol: 'X',
 });

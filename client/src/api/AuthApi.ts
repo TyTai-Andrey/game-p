@@ -11,7 +11,7 @@ class AuthApi {
     const options = {
       data,
       method: 'POST',
-      url: '/register',
+      url: '/auth/register',
     };
 
     try {
@@ -27,7 +27,7 @@ class AuthApi {
     const options = {
       data,
       method: 'POST',
-      url: '/login',
+      url: '/auth/login',
     };
 
     try {
@@ -38,14 +38,19 @@ class AuthApi {
     }
   }
 
-  static async logout(): Promise<void> {
+  static async logout(callback: () => void): Promise<void> {
     const client = BaseApi.getClient();
     const options = {
       method: 'POST',
-      url: '/logout',
+      url: '/auth/logout',
     };
 
-    await client(options);
+    try {
+      await client(options);
+    } catch (error) {
+    }
+
+    callback();
   }
 }
 

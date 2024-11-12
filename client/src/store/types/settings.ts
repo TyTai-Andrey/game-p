@@ -2,6 +2,8 @@ type SettingsState = {
   dashboardSize: number
   itemsForWin: number
   unfairPlay: boolean
+  firstTurnSymbol: 'X' | 'O'
+  isOnline: boolean
 };
 
 type SettingsAction = {

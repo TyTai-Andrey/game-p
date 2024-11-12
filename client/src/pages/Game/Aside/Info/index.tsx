@@ -1,5 +1,4 @@
 // vendor imports
-import classNames from 'classnames';
 import { useShallow } from 'zustand/react/shallow';
 
 // react
@@ -24,29 +23,35 @@ const Info: FC<Props> = () => {
     turnSymbol,
     itemsForWin,
     unfairPlay,
+    firstTurnSymbol,
   } = useStore(useShallow(
     ({
       isFinished,
       turnSymbol,
       itemsForWin,
       unfairPlay,
+      firstTurnSymbol,
     }) => ({
       isFinished,
       turnSymbol,
       itemsForWin,
       unfairPlay,
+      firstTurnSymbol,
     }),
   ));
 
   return (
     <div className={styles.root}>
-      <div className={classNames(styles.infoBlock, styles.turn)}>
-        {!isFinished ? (
-          <>
-            Текущий ход:<Symbol symbol={turnSymbol} />
-          </>
-        ) :
-          <>Игра окончена! Победа <Symbol symbol={isFinished} /></>}
+      <div className={styles.turn}>
+        <div className={styles.infoBlock}>
+          {!isFinished ? (
+            <>
+              Текущий ход:<Symbol symbol={turnSymbol} />
+            </>
+          ) :
+            <>Игра окончена! Победа <Symbol symbol={isFinished} /></>}
+        </div>
+        <div className={styles.infoBlock}>Вы играете за: <Symbol symbol={firstTurnSymbol} /></div>
       </div>
       <div className={styles.shortSettings}>
         <div className={styles.infoBlock}>Нечестная игра: {unfairPlay ? 'Да' : 'Нет'}</div>

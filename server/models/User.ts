@@ -7,7 +7,7 @@ const schema = new Schema({
   password: { type: String, required: true },
   token: { type: String },
   refreshToken: { type: String },
-  games: [{ type: Types.ObjectId, ref: 'Game' }],
+  game: { type: Types.ObjectId, ref: 'Game' },
 });
 
 export default model<IUser & Document>('User', schema);

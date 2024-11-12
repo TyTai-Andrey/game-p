@@ -8,10 +8,10 @@
   background-color: aqua;
 
   button {
-    width: 74px;
-    margin-right: 10px;
+    position: absolute;
+    right: 10px;
 
-    flex-shrink: 0;
+    width: 74px;
   }
 
   .list {

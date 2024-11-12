@@ -4,7 +4,11 @@ import config from '../config/config.js';
 import User from '../models/User.js';
 import validateToken, { isSuccessValidate } from '../utils/validateToken.js';
 
-const authorizationExceptions = ['/login/', '/register/', '/refresh/'];
+const authorizationExceptions = [
+  '/auth/login/',
+  '/auth/register/',
+  '/auth/refresh/'
+];
 
 const needAuth = async (req: Request & any, res: Response, next: NextFunction) => {
   if (req.method === 'OPTIONS') return next();

@@ -23,6 +23,9 @@ export type Props = {
 const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
   const setPosition = useStore(state => state.setPosition);
 
+  const { firstTurnSymbol, isOnline } = useStore(useShallow(
+    ({ firstTurnSymbol, isOnline }) => ({ firstTurnSymbol, isOnline }),
+  ));
   const isFinished = useStore(state => state.isFinished);
   const unfairPlay = useStore(state => state.unfairPlay);
 
@@ -32,6 +35,7 @@ const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
 
   const onClick = () => {
     if (isFinished) return;
+    if (isOnline && firstTurnSymbol !== turnSymbol) return;
     if (maxTurnCount !== turnCount) return;
     if (symbol !== turnSymbol && (unfairPlay || symbol === '_')) {
       setPosition(cellIndex);

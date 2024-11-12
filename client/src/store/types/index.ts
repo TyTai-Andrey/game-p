@@ -4,7 +4,7 @@ import { SettingsAction, SettingsState } from './settings';
 
 type State = GameState & SettingsState & AuthState;
 
-type Action = GameAction & SettingsAction & AuthAction;
+type Action = GameAction & SettingsAction & AuthAction & { setState: (state: Partial<State>) => void };
 
 type Store = State & Action;
 

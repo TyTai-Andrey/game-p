@@ -46,7 +46,7 @@ const Header = () => {
   }, [openModal]);
 
   const onLogoutAccount = useCallback(() => {
-    AuthApi.logout().then(() => logout());
+    AuthApi.logout(logout);
   }, [logout]);
 
   const authButton = useMemo(() => {

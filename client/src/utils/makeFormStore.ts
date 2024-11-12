@@ -20,6 +20,7 @@ type SettingsValue = {
     message: string;
   };
   equalTo?: string;
+  initValue?: FieldValue
 };
 
 type Settings<T extends string = string> = {
@@ -88,7 +89,7 @@ const _createValues = <T extends string>(settings: Settings<T>) => {
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const key in settings) {
     if (Object.keys(defaultValuesForm).includes(settings[key].valueType)) {
-      values[key] = defaultValuesForm[settings[key].valueType];
+      values[key] = settings[key].initValue ?? defaultValuesForm[settings[key].valueType];
     }
   }
 

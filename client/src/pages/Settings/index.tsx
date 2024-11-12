@@ -2,7 +2,7 @@
 import { useShallow } from 'zustand/react/shallow';
 
 // react
-import React, { FC, useEffect } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // components
@@ -19,10 +19,14 @@ import { SettingsState } from '@store/types/settings';
 import useStore from '@store/index';
 
 // utils
+import isResponse from '@utils/check-types';
 import makeFormStore from '@utils/makeFormStore';
 
 // constants
 import pathnames from '@constants/pathnames';
+
+// api
+import GameApi from '@api/GameApi';
 
 type Props = {};
 
@@ -35,6 +39,13 @@ const useForm = makeFormStore({
   },
   itemsForWin: { defaultValidators: ['required'], valueType: 'number' },
   unfairPlay: { defaultValidators: ['required'], valueType: 'boolean' },
+  firstTurnSymbol: { initValue: true, defaultValidators: ['required'], valueType: 'boolean' },
+});
+
+const formattedValues = (values: any, isOnline?: boolean): SettingsState => ({
+  ...values,
+  firstTurnSymbol: values.firstTurnSymbol ? 'X' : 'O',
+  isOnline: isOnline ?? false,
 });
 
 const Settings: FC<Props> = () => {
@@ -81,14 +92,27 @@ const Settings: FC<Props> = () => {
     setValues(newValues);
   };
 
-  const onChangeCheckbox = (value: boolean) => {
+  const onChangeUnfairPlay = useCallback((value: boolean) => {
     setValues({ unfairPlay: value });
-  };
+  }, [setValues]);
+
+  const onChangeFirstTurnSymbol = useCallback((value: boolean) => {
+    setValues({ firstTurnSymbol: value });
+  }, [setValues]);
 
   const onSubmit = () => {
     if (isValid) {
-      setSettings(values as SettingsState);
+      setSettings(formattedValues(values));
       navigate(pathnames.main);
+    }
+  };
+
+  const onCreateGame = async () => {
+    const response = await GameApi.create(formattedValues(values));
+
+    if (isResponse(response)) {
+      setSettings(formattedValues(values, true));
+      navigate(`${pathnames.main}?gameId=${response.gameId}`);
     }
   };
 
@@ -115,17 +139,20 @@ const Settings: FC<Props> = () => {
           defaultChecked={Boolean(values.unfairPlay)}
           error={errors.unfairPlay}
           label="Нечестная игра (позволяет ставить фигуру на фигуру противника)"
-          onChange={onChangeCheckbox}
+          onChange={onChangeUnfairPlay}
+        />
+      </div>
+      <div>
+        <Checkbox
+          defaultChecked={Boolean(values.firstTurnSymbol)}
+          error={errors.firstTurnSymbol}
+          label="Начать за крестики"
+          onChange={onChangeFirstTurnSymbol}
         />
       </div>
       <div className={styles.buttons}>
-        <Button onClick={onSubmit}>Начать игру</Button>
-        <div className={styles.info}>
-          <Button disabled>Начать игру с другом</Button>
-          <p className={styles.text}>
-            Пока что эта функция недоступна, т.к. не сделал ws соединение и создание игры, но вы можете авторизоваться
-          </p>
-        </div>
+        <Button type="submit">Начать игру</Button>
+        <Button onClick={onCreateGame} type="button">Начать игру с другом</Button>
       </div>
     </Form>
   );

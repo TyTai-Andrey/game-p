@@ -9,7 +9,7 @@ const getExpirationDate = (jwtToken: string): number => {
 const authorization = (() => {
   let jwt: Nullable<string> = null;
   let jwtRefresh: Nullable<string> = window.localStorage.getItem('refreshToken') || null;
-  const refreshEndpoint = `${process.env.REACT_APP_API_BASE_URL}/refresh`;
+  const refreshEndpoint = `${process.env.REACT_APP_API_BASE_URL}/auth/refresh`;
 
   let _refreshTimeout: number;
 
