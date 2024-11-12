@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // react
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -8,9 +7,6 @@ import useStore from '@store/index';
 // utils
 import createWebSocketMessage, { MyWebSocketEvents } from '@utils/ws';
 import createGameSocket from '@utils/createSocket';
-
-// types
-import { State } from '@store/types';
 
 export interface SocketComponentProps {
   handleClose: () => void;
@@ -29,41 +25,8 @@ const SocketContext = React.createContext<ISocketContextProps>({
   connected: false,
 });
 
-const parsedSocketMessage = (socketData: any): Partial<State> => {
-  const {
-    history: historyStr,
-    settings: settingsStr,
-    isOwner,
-    turnSymbol,
-    finishedIndexes,
-    position,
-    isFinished,
-  } = socketData;
-  const history = historyStr ? JSON.parse(historyStr) : [];
-  const settings = settingsStr ? JSON.parse(settingsStr) : {};
-
-  const { dashboardSize, itemsForWin, unfairPlay, firstTurnSymbol: ownerTurnSymbol } = settings;
-
-  const guestTurnSymbol = ownerTurnSymbol === 'X' ? 'O' : 'X';
-  const firstTurnSymbol = isOwner ? ownerTurnSymbol : guestTurnSymbol;
-
-  return {
-    ...(turnSymbol !== undefined ? { turnSymbol } : {}),
-    ...(isFinished !== undefined ? { isFinished } : {}),
-    ...(finishedIndexes !== undefined ? { finishedIndexes } : {}),
-    ...(position !== undefined ? { position } : {}),
-    ...(history !== undefined ? { history } : {}),
-    ...(dashboardSize !== undefined ? { dashboardSize } : {}),
-    ...(itemsForWin !== undefined ? { itemsForWin } : {}),
-    ...(firstTurnSymbol !== undefined && isOwner !== undefined ? { firstTurnSymbol } : {}),
-    ...(unfairPlay !== undefined ? { unfairPlay } : {}),
-    isOnline: true,
-  };
-};
-
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
-  const userId = useStore(state => state.userId);
   const setState = useStore(state => state.setState);
   const [connected, setConnected] = useState<boolean>(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);

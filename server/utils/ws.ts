@@ -55,10 +55,14 @@ const getGameDataForSend = (data: IGameDocument, isOwner?: boolean) => {
   });
 }
 
-type WebSocket = Parameters<expressWs.WebsocketRequestHandler>[0]
+type WebSocket = Parameters<expressWs.WebsocketRequestHandler>[0] & {
+  clientId?: string
+  gameId?: string
+}
 type WebSocketServer = ReturnType<expressWs.Instance['getWss']>
+type WebSocketServerWithPatchClient = Omit<WebSocketServer, 'clients'> & { clients: Set<WebSocket> }
 
-const getWSHelpers = (wss: WebSocketServer, ws: WebSocket) => {
+const getWSHelpers = (wss: WebSocketServerWithPatchClient, ws: WebSocket, gameId: string) => {
   const sendForAllClient = (data: any) => {
     wss.clients.forEach(client => {
       if (client.readyState === ws.OPEN) {
@@ -83,9 +87,9 @@ const getWSHelpers = (wss: WebSocketServer, ws: WebSocket) => {
     });
   }
 
-  const sendForAllClientsExceptThis = (data: any) => {
+  const sendForClientById = (data: any, id: string) => {
     wss.clients.forEach(client => {
-      if (client !== ws && client.readyState === ws.OPEN) {
+      if (client.clientId === id && client.gameId === gameId) {
         client.send(JSON.stringify(data));
       }
     });
@@ -95,9 +99,9 @@ const getWSHelpers = (wss: WebSocketServer, ws: WebSocket) => {
     actionForThisClient,
     sendForAllClient,
     sendForThisClient,
-    sendForAllClientsExceptThis
+    sendForClientById
   }
 }
 
-export type { MSG, Settings };
+export type { MSG, Settings, WebSocket, WebSocketServer, WebSocketServerWithPatchClient };
 export { getWSHelpers, getGameDataForBD, getGameDataForSend, MyWebSocketEvents };

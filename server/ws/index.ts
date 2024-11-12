@@ -2,36 +2,43 @@ import expressWs from "express-ws";
 import validateToken, { isSuccessValidate } from '../utils/validateToken.js';
 import Game from '../models/Game.js';
 import { getWSHelpers, getGameDataForBD, MyWebSocketEvents, getGameDataForSend } from '../utils/ws.js';
-import type { MSG } from '../utils/ws.js';
+import type { MSG, WebSocket, WebSocketServerWithPatchClient } from '../utils/ws.js';
+import { IGameDocument } from "../interfaces/Game/index.js";
+
+
+const getIdAndTypeThisGame = (game: IGameDocument, userId: string) => {
+  const ownerId = game?.owner?.toString?.();
+  const guestId = game?.guest?.toString?.();
+
+  const hasGuest = game.guest;
+  const isOwner = ownerId === userId;
+  const isGuest = hasGuest && guestId === userId;
+
+  return { hasGuest, isOwner, isGuest, guestId, ownerId };
+}
 
 const wsRouters = async (ws: expressWs.Instance) => {
   const { app: appWS, getWss } = ws;
-  const wss = getWss();
+  const wss: WebSocketServerWithPatchClient = getWss();
 
-  appWS.ws('/game/:id', async (ws, req) => {
+  appWS.ws('/game/:id', async (ws: WebSocket, req) => {
     const { id } = req.params;
-    const {
-      actionForThisClient,
-      sendForAllClient,
-      sendForThisClient,
-      sendForAllClientsExceptThis
-    } = getWSHelpers(wss, ws);
-
     try {
       const game = await Game.findById(id);
       if (!game) throw new Error('Game not found');
 
-      sendForThisClient({
-        event: MyWebSocketEvents.CONNECTION,
-        data: { success: true },
-      })
+      ws.send(JSON.stringify({ event: MyWebSocketEvents.CONNECTION, data: { success: true } }));
     } catch (error) {
-      sendForThisClient({
-        event: MyWebSocketEvents.CONNECTION,
-        data: { success: false },
-      })
-      actionForThisClient(ws.close);
+      ws.send(JSON.stringify({ event: MyWebSocketEvents.CONNECTION, data: { success: false } }));
+      ws.close();
     }
+
+    const {
+      actionForThisClient,
+      sendForAllClient,
+      sendForThisClient,
+      sendForClientById
+    } = getWSHelpers(wss, ws, id);
 
     ws.on('message', async (msg) => {
       try {
@@ -52,9 +59,10 @@ const wsRouters = async (ws: expressWs.Instance) => {
             const game = await Game.findOne({ _id: id });
             if (!game) throw new Error('Game not found');
 
-            const hasGuest = game.guest;
-            const isOwner = game?.owner?.toString() === validate?.user?.id;
-            const isGuest = hasGuest && game.guest?.toString() === validate.user.id;
+            ws.clientId = validate.user.id.toString();
+            ws.gameId = game._id.toString();
+
+            const { hasGuest, isOwner, isGuest } = getIdAndTypeThisGame(game, validate.user.id);
 
             if (isOwner || (isGuest)) {
               sendForThisClient({
@@ -75,20 +83,19 @@ const wsRouters = async (ws: expressWs.Instance) => {
           }
           case MyWebSocketEvents.TURN: {
             const gameData = getGameDataForBD(data);
-            console.log(gameData);
 
             const game = await Game.findOneAndUpdate({ _id: id }, {
               ...gameData,
             }, { new: true });
-            const isOwner = game?.owner?.toString() === validate?.user?.id;
-            console.log(game, "game");
 
             if (!game) throw new Error('Game not found');
 
-            sendForAllClientsExceptThis({
+            const { isOwner, ownerId, guestId } = getIdAndTypeThisGame(game, validate.user.id);
+
+            sendForClientById({
               event: MyWebSocketEvents.TURN,
               data: getGameDataForSend(game, !isOwner),
-            })
+            }, isOwner ? guestId : ownerId);
           }
           default: {
             break;
