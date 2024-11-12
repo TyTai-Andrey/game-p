@@ -17,18 +17,21 @@ type ISocketContextProps = {
   openSocket: (uuid: string) => void;
   closeSocket: () => void;
   connected: boolean;
+  error: boolean;
 };
 
 const SocketContext = React.createContext<ISocketContextProps>({
   closeSocket: () => { },
   openSocket: () => { },
   connected: false,
+  error: false,
 });
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
   const setState = useStore(state => state.setState);
   const [connected, setConnected] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketUuid, setSocketUuid] = useState<string | null>(null);
 
@@ -76,6 +79,11 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const getInitialState = () => {
       if (socket) {
+        socket.onerror = () => {
+          setConnected(false);
+          setError(true);
+        };
+
         socket.onmessage = (e: MessageEvent) => {
           const socketMessage = JSON.parse(e.data);
           const { event } = socketMessage || {};
@@ -84,6 +92,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           if (event === MyWebSocketEvents.CONNECTION) {
             const { success } = socketData || {};
             setConnected(Boolean(success));
+            setError(!success);
             setState({ isOnline: success });
             if (success) {
               socket.send(createWebSocketMessage({
@@ -133,7 +142,8 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     openSocket,
     closeSocket,
     connected,
-  }), [openSocket, closeSocket, connected]);
+    error,
+  }), [openSocket, closeSocket, connected, error]);
 
   return (
     <SocketContext.Provider value={value}>

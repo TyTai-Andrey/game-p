@@ -8,6 +8,7 @@ import styles from '@pages/Game/Game.module.scss';
 // components
 import Aside from '@pages/Game/Aside';
 import AuthenticationModal from '@components/modals/AuthenticationModal';
+import Button from '@components/Button';
 import Dashboard from '@pages/Game/Dashboard';
 import Loader from '@components/Loader';
 
@@ -29,7 +30,7 @@ export type Props = {};
 const Game: FC<Props> = () => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
 
-  const { openSocket, connected } = useSocket();
+  const { openSocket, connected, error } = useSocket();
   const { openModal } = useModal();
 
   const location = useLocation();
@@ -52,16 +53,31 @@ const Game: FC<Props> = () => {
     }
   }, [isAuthenticated, gameId]);
 
-  const content = useMemo(() => (
-    <>
-      <Dashboard />
-      <Aside />
-    </>
-  ), []);
+  const content = useMemo(() => {
+    if (!gameId || connected) {
+      return (
+        <>
+          <Dashboard />
+          <Aside />
+        </>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className={styles.error}>
+          <p>Данная игра недоступна или была удалена</p>
+          <Button onClick={() => navigate(pathnames.settings)}>Перейти к настройкам</Button>
+        </div>
+      );
+    }
+
+    return <Loader className={styles.loader} />;
+  }, [connected, error, gameId]);
 
   return (
     <div className={styles.root}>
-      {(connected || !gameId) ? content : <Loader className={styles.loader} />}
+      {content}
     </div>
   );
 };
