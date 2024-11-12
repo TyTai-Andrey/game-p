@@ -1,23 +1,39 @@
 // react
-import React, { FC, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { FC, useEffect, useLayoutEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // styles
 import styles from '@pages/Game/Game.module.scss';
 
 // components
 import Aside from '@pages/Game/Aside';
+import AuthenticationModal from '@components/modals/AuthenticationModal';
 import Dashboard from '@pages/Game/Dashboard';
 import Loader from '@components/Loader';
+
+// constants
+import pathnames from '@constants/pathnames';
+
+// hooks
+import useModal from '@hooks/useModal';
 import useSocket from '@hooks/useSocket';
+
+// store
 import useStore from '@store/index';
+
+// utils
+import authorization from '@utils/authorization';
 
 export type Props = {};
 
 const Game: FC<Props> = () => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
+
   const { openSocket, connected } = useSocket();
+  const { openModal } = useModal();
+
   const location = useLocation();
+  const navigate = useNavigate();
 
   const gameId = useMemo(() => {
     const query = new URLSearchParams(location.search);
@@ -27,6 +43,14 @@ const Game: FC<Props> = () => {
   useEffect(() => {
     if (gameId) openSocket(gameId);
   }, [gameId, isAuthenticated]);
+
+  useLayoutEffect(() => {
+    if (!isAuthenticated && !authorization.getToken() && gameId) {
+      openModal(AuthenticationModal, {
+        onClose: () => { navigate(pathnames.main); },
+      });
+    }
+  }, [isAuthenticated, gameId]);
 
   const content = useMemo(() => (
     <>

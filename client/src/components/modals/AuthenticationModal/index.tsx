@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // styles
@@ -26,7 +26,7 @@ import AuthApi from '@api/AuthApi';
 import useStore from '@store/index';
 
 type AuthenticationModalProps = {
-
+  onClose?: () => void
 } & ModalComponentProps;
 
 const useForm = makeFormStore({
@@ -38,7 +38,7 @@ const useForm = makeFormStore({
   password: { defaultValidators: ['required'], valueType: 'string', minLength: 6 },
 });
 
-const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose }) => {
+const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose, onClose }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -76,6 +76,11 @@ const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose
     navigate(pathnames.register);
   };
 
+  const onCloseHandler = useCallback(() => {
+    onClose?.();
+    handleClose();
+  }, []);
+
   useEffect(() => {
     return () => {
       clearForm();
@@ -83,7 +88,7 @@ const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose
   }, []);
 
   return (
-    <Modal className={styles.root} isOpen={isOpen} onClose={handleClose} title="Войти">
+    <Modal className={styles.root} isOpen={isOpen} onClose={onCloseHandler} title="Войти">
       <Form className={styles.form} onSubmit={onSubmit}>
         <Input
           autoComplete="email"

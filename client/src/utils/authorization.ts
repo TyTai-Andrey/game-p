@@ -7,7 +7,7 @@ const getExpirationDate = (jwtToken: string): number => {
 };
 
 const authorization = (() => {
-  let jwt: Nullable<string> = null;
+  let jwt: Nullable<string> = window.localStorage.getItem('token') || null;
   let jwtRefresh: Nullable<string> = window.localStorage.getItem('refreshToken') || null;
   const refreshEndpoint = `${process.env.REACT_APP_API_BASE_URL}/auth/refresh`;
 
@@ -24,6 +24,7 @@ const authorization = (() => {
     jwt = token;
     jwtRefresh = refreshToken;
     window.localStorage.setItem('refreshToken', refreshToken);
+    window.localStorage.setItem('token', token);
 
     if (expiry) {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -39,6 +40,7 @@ const authorization = (() => {
     jwt = null;
     jwtRefresh = null;
     window.localStorage.removeItem('refreshToken');
+    window.localStorage.removeItem('token');
 
     _breakRefreshToken();
   };
