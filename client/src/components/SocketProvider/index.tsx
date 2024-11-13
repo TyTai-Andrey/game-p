@@ -29,6 +29,7 @@ const SocketContext = React.createContext<ISocketContextProps>({
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
+  const userId = useStore(state => state.userId);
   const setState = useStore(state => state.setState);
   const [connected, setConnected] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -73,8 +74,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
         socket.close();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketUuid]);
+  }, [socketUuid, userId]);
 
   useEffect(() => {
     const getInitialState = () => {
