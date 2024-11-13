@@ -6,7 +6,10 @@ import User from '../../models/User.js';
 import Game from '../../models/Game.js';
 
 // utils
-import { Settings } from '../../utils/ws-operations.js';
+import { MyWebSocketEvents, Settings } from '../../utils/ws-operations.js';
+
+// ws
+import ExpressWs from '../../instances/ws.js';
 
 const router = Router();
 
@@ -33,6 +36,20 @@ router.post(
         dashboardSize, firstTurnSymbol, unfairPlay, itemsForWin,
       });
       const { userId } = req.body.middleware;
+      const prevGame = await Game.findOne({ owner: userId });
+
+      if (prevGame?.id && prevGame?.guest) {
+        const wss = new ExpressWs().getWss();
+        wss?.clients?.forEach((client) => {
+          if (
+            client.readyState === client.OPEN
+            && client.gameId === prevGame?.id
+            && client.gameId !== prevGame?.guest?.toString()
+          ) {
+            client.send(JSON.stringify({ event: MyWebSocketEvents.CONNECTION, data: { success: false } }));
+          }
+        });
+      }
 
       await Game.deleteMany({ owner: userId });
 

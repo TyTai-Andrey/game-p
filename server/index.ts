@@ -1,7 +1,6 @@
 // express
 import express from 'express';
 import session from 'express-session';
-import expressWs from 'express-ws';
 
 // mongoose
 import mongoose from 'mongoose';
@@ -20,6 +19,7 @@ import routes from './routes/index.js';
 import needAuth from './middleware/auth.js';
 
 // ws
+import ExpressWs from './instances/ws.js';
 import wsRouters from './ws/index.js';
 
 declare module 'express-session' {
@@ -51,9 +51,11 @@ app.use(
   }),
 );
 
-const appWS = expressWs(app);
+const { expressWsApp } = new ExpressWs(app);
 
-wsRouters(appWS);
+if (expressWsApp) {
+  wsRouters(expressWsApp);
+}
 app.use(needAuth, routes);
 
 async function start() {
