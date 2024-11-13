@@ -84,6 +84,10 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           setError(true);
         };
 
+        socket.onclose = () => {
+          setConnected(false);
+        };
+
         socket.onmessage = (e: MessageEvent) => {
           const socketMessage = JSON.parse(e.data);
           const { event } = socketMessage || {};
