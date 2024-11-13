@@ -1,11 +1,19 @@
-import { Request, Router } from "express";
-import { check, validationResult } from "express-validator";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import User from "../../models/User.js";
-import config from "../../config/config.js";
-import createTokens from "../../utils/createTokens.js";
-import validateToken, { isSuccessValidate } from "../../utils/validateToken.js";
+// bcryptjs
+import bcrypt from 'bcryptjs';
+
+// express
+import { Router } from 'express';
+import { check, validationResult } from 'express-validator';
+
+// models
+import User from '../../models/User.js';
+
+// utils
+import {
+  validateToken,
+  createTokens,
+  isSuccessValidateToken,
+} from '../../utils/token-operations.js';
 
 const router = Router();
 
@@ -23,9 +31,10 @@ router.get('/test', async (req, res) => {
     return res.status(400).json({ message: 'Пользователь не найден' });
   }
   res.json({ user });
-})
+});
 
-router.post('/register',
+router.post(
+  '/register',
   ...validates,
   async (req, res) => {
     try {
@@ -59,9 +68,11 @@ router.post('/register',
     } catch (error) {
       res.status(500).json({ error });
     }
-  });
+  },
+);
 
-router.post('/login',
+router.post(
+  '/login',
   ...validates,
   async (req, res) => {
     try {
@@ -97,7 +108,8 @@ router.post('/login',
     } catch (error) {
       res.status(500).json({ error });
     }
-  });
+  },
+);
 
 router.post('/logout', async (req, res) => {
   try {
@@ -112,11 +124,11 @@ router.post('/logout', async (req, res) => {
 router.post('/refresh', async (req, res) => {
   try {
     const { refresh } = req.body;
-    const validate = await validateToken(refresh, "refreshToken");
-    if (!isSuccessValidate(validate)) {
+    const validate = await validateToken(refresh, 'refreshToken');
+    if (!isSuccessValidateToken(validate)) {
       return res.status(401).json(validate);
     }
-    const { user } = validate
+    const { user } = validate;
     const { token, refreshToken } = createTokens(user);
     await User.findOneAndUpdate({ _id: user.id }, { token, refreshToken });
     res.json({ token, refreshToken, userId: user.id });

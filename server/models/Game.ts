@@ -1,5 +1,9 @@
+// mongoose
 import pkg, { Document } from 'mongoose';
+
+// interfaces
 import IGame from '../interfaces/Game/index.js';
+
 const { Schema, model, Types } = pkg;
 
 const schema = new Schema({

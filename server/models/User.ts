@@ -1,5 +1,9 @@
+// mongoose
 import pkg, { Document } from 'mongoose';
+
+// interfaces
 import IUser from '../interfaces/User/index.js';
+
 const { Schema, model, Types } = pkg;
 
 const schema = new Schema({

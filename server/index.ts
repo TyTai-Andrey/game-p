@@ -1,12 +1,25 @@
+// express
 import express from 'express';
+import session from 'express-session';
+import expressWs from 'express-ws';
+
+// mongoose
+import mongoose from 'mongoose';
+
+// parsers
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
+
+// config
 import config from './config/config.js';
+
+// routes
 import routes from './routes/index.js';
+
+// middleware
 import needAuth from './middleware/auth.js';
-import mongoose from 'mongoose';
-import expressWs from 'express-ws';
+
+// ws
 import wsRouters from './ws/index.js';
 
 declare module 'express-session' {
@@ -33,30 +46,23 @@ app.use(cookieParser());
 app.use(
   session({
     secret: 'secret-session-id',
-    // name: 'sessionId',
     resave: false,
     saveUninitialized: true,
   }),
 );
 
-// app.get('/api/session/:id', (req, res) => {
-//   req.session.ID = req.params.id;
-//   return res.redirect('/');
-// });
-
 const appWS = expressWs(app);
-wsRouters(appWS)
 
-
+wsRouters(appWS);
 app.use(needAuth, routes);
 
 async function start() {
   try {
-    console.log("starting server...");
+    console.log('starting server...');
 
     await mongoose.connect(config.mongo.url, config.mongo.options)
       .then(() => console.log('MongoDB connected.'))
-      .catch(err => console.log(err))
+      .catch((err) => console.log(err));
 
     app.listen(config.server.port, () => {
       console.log(`Server running on port ${config.server.port}`);

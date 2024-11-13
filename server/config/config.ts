@@ -1,4 +1,4 @@
-export default {
+const config = {
   mongo: {
     url: `mongodb://${process.env.mongoDomain || '127.0.0.1'}:27017/`,
     options: {
@@ -7,9 +7,11 @@ export default {
       useUnifiedTopology: true,
     },
   },
-  jwtSecret: "super_secret_jwt_key",
+  jwtSecret: 'super_secret_jwt_key',
   server: {
     port: 8080,
     dev_port: 6008,
   },
 };
+
+export default config;

@@ -1,5 +1,8 @@
-import { Document } from "mongoose"
-import IGame from "../Game/index.js"
+// mongoose
+import { Document } from 'mongoose';
+
+// interfaces
+import IGame from '../Game/index.js';
 
 type IUser = {
   email: string

@@ -1,10 +1,21 @@
-import expressWs from "express-ws";
-import validateToken, { isSuccessValidate } from '../utils/validateToken.js';
-import Game from '../models/Game.js';
-import { getWSHelpers, getGameDataForBD, MyWebSocketEvents, getGameDataForSend } from '../utils/ws.js';
-import type { MSG, WebSocket, WebSocketServerWithPatchClient } from '../utils/ws.js';
-import { IGameDocument } from "../interfaces/Game/index.js";
+// express
+import expressWs from 'express-ws';
 
+// models
+import Game from '../models/Game.js';
+
+// utils
+import { validateToken, isSuccessValidateToken } from '../utils/token-operations.js';
+import {
+  getWSHelpers,
+  getGameDataForBD,
+  MyWebSocketEvents,
+  getGameDataForSend,
+} from '../utils/ws-operations.js';
+import type { MSG, WebSocket, WebSocketServerWithPatchClient } from '../utils/ws-operations.js';
+
+// interfaces
+import { IGameDocument } from '../interfaces/Game/index.js';
 
 const getIdAndTypeThisGame = (game: IGameDocument, userId: string) => {
   const ownerId = game?.owner?.toString?.();
@@ -14,8 +25,10 @@ const getIdAndTypeThisGame = (game: IGameDocument, userId: string) => {
   const isOwner = ownerId === userId;
   const isGuest = hasGuest && guestId === userId;
 
-  return { hasGuest, isOwner, isGuest, guestId, ownerId };
-}
+  return {
+    hasGuest, isOwner, isGuest, guestId, ownerId,
+  };
+};
 
 const wsRouters = async (ws: expressWs.Instance) => {
   const { app: appWS, getWss } = ws;
@@ -35,9 +48,8 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
     const {
       actionForThisClient,
-      sendForAllClient,
       sendForThisClient,
-      sendForClientById
+      sendForClientById,
     } = getWSHelpers(wss, ws, id);
 
     ws.on('message', async (msg) => {
@@ -47,7 +59,7 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
         const validate = await validateToken(token);
 
-        if (!isSuccessValidate(validate)) {
+        if (!isSuccessValidateToken(validate)) {
           actionForThisClient(ws.close);
           return;
         }
@@ -68,7 +80,7 @@ const wsRouters = async (ws: expressWs.Instance) => {
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
                 data: getGameDataForSend(game, isOwner),
-              })
+              });
               return;
             }
             if (!hasGuest) {
@@ -78,7 +90,7 @@ const wsRouters = async (ws: expressWs.Instance) => {
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
                 data: getGameDataForSend(game, isOwner),
-              })
+              });
             }
           }
           case MyWebSocketEvents.TURN: {
@@ -91,7 +103,6 @@ const wsRouters = async (ws: expressWs.Instance) => {
             if (!game) throw new Error('Game not found');
 
             const { isOwner, ownerId, guestId } = getIdAndTypeThisGame(game, validate.user.id);
-
             sendForClientById({
               event: MyWebSocketEvents.TURN,
               data: getGameDataForSend(game, !isOwner),
@@ -107,12 +118,11 @@ const wsRouters = async (ws: expressWs.Instance) => {
         sendForThisClient({
           event: MyWebSocketEvents.CONNECTION,
           data: { success: false },
-        })
+        });
         actionForThisClient(() => ws?.close?.());
       }
     });
   });
-}
-
+};
 
 export default wsRouters;

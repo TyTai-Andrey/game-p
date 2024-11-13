@@ -1,24 +1,24 @@
+// express
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import config from '../config/config.js';
-import User from '../models/User.js';
-import validateToken, { isSuccessValidate } from '../utils/validateToken.js';
+
+// utils
+import { validateToken, isSuccessValidateToken } from '../utils/token-operations.js';
 
 const authorizationExceptions = [
   '/auth/login/',
   '/auth/register/',
-  '/auth/refresh/'
+  '/auth/refresh/',
 ];
 
 const needAuth = async (req: Request & any, res: Response, next: NextFunction) => {
   if (req.method === 'OPTIONS') return next();
-  if (authorizationExceptions.find(i => i.includes(req.path))) return next();
+  if (authorizationExceptions.find((i) => i.includes(req.path))) return next();
 
   try {
     const token = req.headers['authorization']?.split(' ')[1]; // "Bearer TOKEN"
 
     const validate = await validateToken(token);
-    if (!isSuccessValidate(validate)) {
+    if (!isSuccessValidateToken(validate)) {
       return res.status(401).json(validate);
     }
 
@@ -33,4 +33,4 @@ const needAuth = async (req: Request & any, res: Response, next: NextFunction) =
   }
 };
 
-export default needAuth
+export default needAuth;

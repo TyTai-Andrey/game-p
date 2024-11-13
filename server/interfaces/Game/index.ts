@@ -1,4 +1,5 @@
-import { Document } from "mongoose";
+// mongoose
+import { Document } from 'mongoose';
 
 type IGame = {
   owner: string;
