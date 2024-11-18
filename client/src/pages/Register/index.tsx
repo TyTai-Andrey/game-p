@@ -41,7 +41,7 @@ const Register = () => {
 
   const [error, setError] = useState('');
 
-  const onSubmit = useCallback(({ values }: OnSubmitFormProps) => {
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof useForm>) => {
     AuthApi.register({
       email: String(values.email),
       password: String(values.password),

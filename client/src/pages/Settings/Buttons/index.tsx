@@ -15,8 +15,8 @@ import pathnames from '@constants/pathnames';
 import GameApi from '@api/GameApi';
 
 // utils
+import { FormType } from '@utils/makeFormStore';
 import isResponse from '@utils/check-types';
-import makeFormStore from '@utils/makeFormStore';
 
 // store
 import { SettingsState } from '@store/types/settings';
@@ -24,7 +24,7 @@ import useStore from '@store/index';
 
 type Props = {
   formattedValues: (values: any, isOnline?: boolean) => SettingsState
-  form: ReturnType<typeof makeFormStore>
+  form: FormType
 };
 
 const Buttons: FC<Props> = ({ formattedValues, form }) => {

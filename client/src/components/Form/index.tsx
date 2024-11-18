@@ -4,31 +4,31 @@ import classNames from 'classnames';
 // react
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-// styles
+// utils
+import { FormType } from '@utils/makeFormStore';
 import addExtraPropsChildren from '@utils/addExtraPropsChildren';
-import makeFormStore from '@utils/makeFormStore';
-import styles from './Form.module.scss';
 
-type FormType = ReturnType<typeof makeFormStore>;
+// styles
+import styles from '@components/Form/Form.module.scss';
 
-type OnSubmitFormProps = {
+type OnSubmitFormProps<T extends FormType> = {
   event: React.FormEvent<HTMLFormElement>,
-  values: ReturnType<FormType['getState']>['values'],
+  values: ReturnType<T['getState']>['values'],
 };
 
-export interface FormProps {
+export interface FormProps<T extends FormType> {
   children: React.ReactNode,
   className?: string,
-  onSubmit?: (props: OnSubmitFormProps) => void,
-  form?: FormType
+  onSubmit?: (props: OnSubmitFormProps<T>) => void,
+  form?: T
 }
 
-const Form: React.FC<FormProps> = ({
+const Form = <T extends FormType>({
   children,
   className,
   onSubmit,
   form,
-}) => {
+}: FormProps<T>) => {
   const onSubmitHandler = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     form?.getState()?.validate?.();

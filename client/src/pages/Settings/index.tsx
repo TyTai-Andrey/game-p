@@ -20,7 +20,7 @@ import { SettingsState } from '@store/types/settings';
 import useStore from '@store/index';
 
 // utils
-import makeFormStore from '@utils/makeFormStore';
+import makeFormStore, { FieldFormValue } from '@utils/makeFormStore';
 
 // constants
 import pathnames from '@constants/pathnames';
@@ -67,7 +67,7 @@ const Settings: FC<Props> = () => {
     setValues(initFormValues);
   }, [initFormValues]);
 
-  const onChangeItemsForWin = useCallback((value: string | number | boolean) => {
+  const onChangeItemsForWin = useCallback((value: FieldFormValue) => {
     const { dashboardSize } = useForm.getState().values;
     const newValues = {
       itemsForWin: value,
@@ -78,7 +78,7 @@ const Settings: FC<Props> = () => {
     setValues(newValues);
   }, []);
 
-  const onChangeDashboardSize = useCallback((value: string | number | boolean) => {
+  const onChangeDashboardSize = useCallback((value: FieldFormValue) => {
     const { itemsForWin } = useForm.getState().values;
     const newValues = {
       dashboardSize: value,
@@ -89,7 +89,7 @@ const Settings: FC<Props> = () => {
     setValues(newValues);
   }, []);
 
-  const onSubmit = useCallback(({ values }: OnSubmitFormProps) => {
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof useForm>) => {
     setSettings(formattedValues(values));
     navigate(pathnames.main);
   }, []);

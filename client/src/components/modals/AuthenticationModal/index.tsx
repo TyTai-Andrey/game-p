@@ -42,7 +42,7 @@ const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose
 
   const setAuthData = useStore(state => state.setAuthData);
 
-  const onSubmit = useCallback(({ values }: OnSubmitFormProps) => {
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof useForm>) => {
     AuthApi.login(values as AuthData).then((data) => {
       if (isResponse(data)) {
         setAuthData(data);

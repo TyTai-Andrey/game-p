@@ -4,11 +4,13 @@ import { devtools } from 'zustand/middleware';
 
 // constants
 import { defaultErrorsForm, defaultValuesForm } from '@constants/form';
-import { isBoolean, isNumber, isString, isUndefined } from './type-operations';
+
+// utils
+import { isBoolean, isNumber, isString, isUndefined } from '@utils/type-operations';
 
 type DefaultValidators = 'required';
 
-type FieldValue = string | number | boolean;
+type FieldFormValue = string | number | boolean;
 type SettingsValue = {
   defaultValidators?: DefaultValidators[];
   valueType: 'string' | 'boolean' | 'number';
@@ -21,16 +23,16 @@ type SettingsValue = {
     message: string;
   };
   equalTo?: string;
-  initValue?: FieldValue
+  initValue?: FieldFormValue
 };
 
-type Settings<T extends string = string> = {
+type SettingsForm<T extends string = string> = {
   [key in T]: SettingsValue;
 };
 
 const _validateForm = <T extends string>(
-  values: Partial<Record<T, FieldValue>>,
-  settings: Settings<T>,
+  values: Partial<Record<T, FieldFormValue>>,
+  settings: SettingsForm<T>,
 ) => {
   const errors: Partial<Record<keyof typeof values, string>> = {};
 
@@ -83,8 +85,8 @@ const _validateForm = <T extends string>(
   return { errors, isValid: !Object.keys(errors).length };
 };
 
-const _createValues = <T extends string>(settings: Settings<T>) => {
-  type Values = Record<T, FieldValue>;
+const _createValues = <T extends string>(settings: SettingsForm<T>) => {
+  type Values = Record<T, FieldFormValue>;
   const values: Partial<Values> = {};
 
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
@@ -97,8 +99,8 @@ const _createValues = <T extends string>(settings: Settings<T>) => {
   return values;
 };
 
-const makeFormStore = <T extends string>(settings: Settings<T>, formName?: string) => {
-  type Values = Record<T, FieldValue>;
+const makeFormStore = <T extends string>(settings: SettingsForm<T>, formName?: string) => {
+  type Values = Record<T, FieldFormValue>;
   type Errors = Record<T, string | boolean>;
 
   type Store = {
@@ -144,4 +146,7 @@ const makeFormStore = <T extends string>(settings: Settings<T>, formName?: strin
   return create<Store>(initializer);
 };
 
+type FormType = ReturnType<typeof makeFormStore>;
+
+export type { FormType, SettingsForm, FieldFormValue };
 export default makeFormStore;
