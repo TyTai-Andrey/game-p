@@ -2,7 +2,7 @@
 import { useShallow } from 'zustand/react/shallow';
 
 // react
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
 // styles
 import styles from '@pages/Game/Dashboard/Cell/Cell.module.scss';
@@ -33,14 +33,14 @@ const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
     ({ maxTurnCount, turnCount, turnSymbol }) => ({ maxTurnCount, turnCount, turnSymbol }),
   ));
 
-  const onClick = () => {
+  const onClick = useCallback(() => {
     if (isFinished) return;
     if (isOnline && firstTurnSymbol !== turnSymbol) return;
     if (maxTurnCount !== turnCount) return;
     if (symbol !== turnSymbol && (unfairPlay || symbol === '_')) {
       setPosition(cellIndex);
     }
-  };
+  }, [turnCount, isOnline]);
 
   return (
     <div
