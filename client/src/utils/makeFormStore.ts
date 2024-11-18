@@ -1,5 +1,6 @@
 // vendor imports
-import { create } from 'zustand';
+import { StateCreator, create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 // constants
 import { defaultErrorsForm, defaultValuesForm } from '@constants/form';
@@ -96,7 +97,7 @@ const _createValues = <T extends string>(settings: Settings<T>) => {
   return values;
 };
 
-const makeFormStore = <T extends string>(settings: Settings<T>) => {
+const makeFormStore = <T extends string>(settings: Settings<T>, formName?: string) => {
   type Values = Record<T, FieldValue>;
   type Errors = Record<T, string | boolean>;
 
@@ -113,7 +114,7 @@ const makeFormStore = <T extends string>(settings: Settings<T>) => {
 
   const values = _createValues<T>(settings);
 
-  return create<Store>(set => ({
+  const initializer: StateCreator<Store> = set => ({
     clearErrors: () => set({ errors: {} }),
     errors: {},
     isValid: true,
@@ -137,7 +138,10 @@ const makeFormStore = <T extends string>(settings: Settings<T>) => {
       isValid: true,
       values: values as Values,
     })),
-  }));
+  });
+
+  if (formName) return create<Store>()(devtools(initializer, { name: formName }));
+  return create<Store>(initializer);
 };
 
 export default makeFormStore;

@@ -1,6 +1,11 @@
 // utils
 import slice from '@utils/array-operations';
 
+// types
+import { GameState } from '@store/types/game';
+import { SettingsState } from '@store/types/settings';
+import { State } from '@store/types';
+
 const checkRowOnFinish = (diagonal: string[], countForWin: number, symbol: 'X' | 'O'): [number, number] | undefined => {
   const row = diagonal.join('');
   const winRow = new Array(countForWin).fill(symbol).join('');
@@ -126,17 +131,17 @@ const checkAllDiagonals = ({
   if (isFinishByBottomLeftRightDiagonal) return isFinishByBottomLeftRightDiagonal;
 };
 
-type IsFinishProps = {
+type IsFinishGameProps = {
   position: string;
   itemsForWin: number;
   symbol: 'X' | 'O';
 };
 
-const isFinish = ({
+const isFinishGame = ({
   position,
   itemsForWin,
   symbol,
-}: IsFinishProps): number[] | null => {
+}: IsFinishGameProps): number[] | null => {
   const { length } = position;
   const rowsCount = Math.sqrt(length);
   const colsCount = Math.sqrt(length);
@@ -152,7 +157,7 @@ const isFinish = ({
         (_, index) => ((index >= i * rowsCount) && (index < (i * rowsCount + rowsCount)) ? index : null),
       ).filter(i => i !== null);
 
-      return slice(isFinishByDiagonalIndexes, ...isFinish);
+      return slice(isFinishByDiagonalIndexes as number[], ...isFinish);
     }
   }
 
@@ -166,7 +171,7 @@ const isFinish = ({
         (_, index) => ((index % colsCount === i) ? index : null),
       ).filter(i => i !== null);
 
-      return slice(isFinishByDiagonalIndexes, ...isFinish);
+      return slice(isFinishByDiagonalIndexes as number[], ...isFinish);
     }
   }
 
@@ -183,4 +188,38 @@ const isFinish = ({
   return null;
 };
 
-export default isFinish;
+type GetGameStateByTurnProps = {
+  cellIndex: number,
+} & Pick<GameState, 'turnSymbol' | 'position' | 'history'>
+& Pick<SettingsState, 'itemsForWin'>;
+
+const getGameStateByTurn = ({
+  cellIndex,
+  history,
+  position,
+  turnSymbol,
+  itemsForWin,
+}: GetGameStateByTurnProps): Partial<State> => {
+  const newPosition = position.slice(0, cellIndex) + turnSymbol + position.slice(cellIndex + 1);
+  const turnCount = history.length;
+  const finishedIndexes = isFinishGame({
+    position: newPosition,
+    itemsForWin,
+    symbol: turnSymbol,
+  });
+
+  const symbol = turnSymbol === 'X' ? 'O' : 'X';
+  return ({
+    history: [...history, {
+      cellIndex, position: newPosition, turnCount, turnSymbol: symbol,
+    }],
+    isFinished: finishedIndexes ? turnSymbol : null,
+    finishedIndexes,
+    maxTurnCount: turnCount,
+    position: newPosition,
+    turnCount,
+    turnSymbol: symbol,
+  });
+};
+
+export { isFinishGame, getGameStateByTurn };

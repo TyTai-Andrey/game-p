@@ -38,6 +38,10 @@ type CreateWebSocketMessageProps = {
   data?: WSGameDate;
 };
 
+const createGameSocket = (uuid: string) => new WebSocket(
+  `ws://${process.env.REACT_APP_API_BASE_DOMAIN}/game/${uuid}`,
+);
+
 const createWebSocketMessage = (props: CreateWebSocketMessageProps) => {
   const history = JSON.stringify(props.data?.history || []);
   const settings = JSON.stringify(props.data?.settings || {
@@ -60,6 +64,6 @@ const createWebSocketMessage = (props: CreateWebSocketMessageProps) => {
   return JSON.stringify({ event: props.event, data, token: authorization.getToken() });
 };
 
-export { MyWebSocketEvents };
+export { createGameSocket, MyWebSocketEvents };
 export type { MSGRequest, MSGResponse, WSGameDate };
 export default createWebSocketMessage;

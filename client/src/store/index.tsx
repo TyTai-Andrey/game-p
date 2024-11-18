@@ -53,6 +53,7 @@ const useStore = create<Store>()(
         version: transformVersionToNumber(currentVersion),
       },
     ),
+    { name: 'mainStore' },
   ),
 );
 

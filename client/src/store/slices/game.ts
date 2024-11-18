@@ -1,5 +1,5 @@
 // utils
-import getGameStateByTurn from '@utils/getGameStateByTurn';
+import { getGameStateByTurn } from '@utils/game-operations';
 
 // types
 import { GameAction, GameState } from '../types/game';

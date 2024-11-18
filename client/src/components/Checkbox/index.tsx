@@ -21,7 +21,7 @@ interface CheckboxProps {
   error?: boolean | string | null;
 }
 
-interface CheckboxInterface extends React.FC<CheckboxProps> {}
+interface CheckboxInterface extends React.FC<CheckboxProps> { }
 
 const Checkbox: CheckboxInterface = ({
   className,

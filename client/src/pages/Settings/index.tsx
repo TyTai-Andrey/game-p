@@ -6,9 +6,10 @@ import React, { FC, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // components
-import Button from '@components/Button';
+import Form, { OnSubmitFormProps } from '@components/Form';
+import Buttons from '@pages/Settings/Buttons';
 import Checkbox from '@components/Checkbox';
-import Form from '@components/Form';
+import FormItem from '@components/Form/FormItem';
 import Input from '@components/Input';
 
 // styles
@@ -19,14 +20,12 @@ import { SettingsState } from '@store/types/settings';
 import useStore from '@store/index';
 
 // utils
-import isResponse from '@utils/check-types';
 import makeFormStore from '@utils/makeFormStore';
 
 // constants
 import pathnames from '@constants/pathnames';
 
 // api
-import GameApi from '@api/GameApi';
 
 type Props = {};
 
@@ -40,7 +39,7 @@ const useForm = makeFormStore({
   itemsForWin: { defaultValidators: ['required'], valueType: 'number' },
   unfairPlay: { defaultValidators: ['required'], valueType: 'boolean' },
   firstTurnSymbol: { initValue: true, defaultValidators: ['required'], valueType: 'boolean' },
-});
+}, 'settingsForm');
 
 const formattedValues = (values: any, isOnline?: boolean): SettingsState => ({
   ...values,
@@ -50,9 +49,7 @@ const formattedValues = (values: any, isOnline?: boolean): SettingsState => ({
 
 const Settings: FC<Props> = () => {
   const navigate = useNavigate();
-  const { errors, isValid, setValues, values } = useForm(useShallow(
-    ({ errors, isValid, setValues, values }) => ({ errors, isValid, setValues, values }),
-  ));
+  const setValues = useForm(state => state.setValues);
   const setSettings = useStore(state => state.setSettings);
   const initFormValues = useStore(useShallow(
     ({
@@ -70,90 +67,70 @@ const Settings: FC<Props> = () => {
     setValues(initFormValues);
   }, [initFormValues]);
 
-  const onChangeItemsForWin = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
+  const onChangeItemsForWin = useCallback((value: string | number | boolean) => {
+    const { dashboardSize } = useForm.getState().values;
     const newValues = {
       itemsForWin: value,
-      ...((Number(values.dashboardSize) < value) ?
+      ...((Number(dashboardSize) < Number(value)) ?
         { dashboardSize: value } :
         {}),
     };
     setValues(newValues);
-  };
+  }, []);
 
-  const onChangeDashboardSize = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
+  const onChangeDashboardSize = useCallback((value: string | number | boolean) => {
+    const { itemsForWin } = useForm.getState().values;
     const newValues = {
       dashboardSize: value,
-      ...((Number(values.itemsForWin) > value) ?
+      ...((Number(itemsForWin) > Number(value)) ?
         { itemsForWin: value } :
         {}),
     };
     setValues(newValues);
-  };
+  }, []);
 
-  const onChangeUnfairPlay = useCallback((value: boolean) => {
-    setValues({ unfairPlay: value });
-  }, [setValues]);
-
-  const onChangeFirstTurnSymbol = useCallback((value: boolean) => {
-    setValues({ firstTurnSymbol: value });
-  }, [setValues]);
-
-  const onSubmit = () => {
-    if (isValid) {
-      setSettings(formattedValues(values));
-      navigate(pathnames.main);
-    }
-  };
-
-  const onCreateGame = async () => {
-    const response = await GameApi.create(formattedValues(values));
-
-    if (isResponse(response)) {
-      setSettings(formattedValues(values, true));
-      navigate(`${pathnames.main}?gameId=${response.gameId}`);
-    }
-  };
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps) => {
+    setSettings(formattedValues(values));
+    navigate(pathnames.main);
+  }, []);
 
   return (
-    <Form className={styles.root} onSubmit={onSubmit}>
-      <Input
-        error={errors.dashboardSize}
-        label="Размер доски"
+    <Form className={styles.root} form={useForm} onSubmit={onSubmit}>
+      <FormItem
         name="dashboardSize"
         onChange={onChangeDashboardSize}
-        type="number"
-        value={String(values.dashboardSize)}
-      />
-      <Input
-        error={errors.itemsForWin}
-        label="Символов в ряд для победы"
+        valueType="number"
+      >
+        <Input
+          label="Размер доски"
+          name="dashboardSize"
+          type="number"
+        />
+      </FormItem>
+      <FormItem
         name="itemsForWin"
         onChange={onChangeItemsForWin}
-        type="number"
-        value={String(values.itemsForWin)}
-      />
-      <div>
-        <Checkbox
-          defaultChecked={Boolean(values.unfairPlay)}
-          error={errors.unfairPlay}
-          label="Нечестная игра (позволяет ставить фигуру на фигуру противника)"
-          onChange={onChangeUnfairPlay}
+        valueType="number"
+      >
+        <Input
+          label="Символов в ряд для победы"
+          name="itemsForWin"
+          type="number"
         />
-      </div>
-      <div>
-        <Checkbox
-          defaultChecked={Boolean(values.firstTurnSymbol)}
-          error={errors.firstTurnSymbol}
-          label="Начать за крестики"
-          onChange={onChangeFirstTurnSymbol}
-        />
-      </div>
-      <div className={styles.buttons}>
-        <Button type="submit">Начать игру</Button>
-        <Button onClick={onCreateGame} type="button">Начать игру с другом</Button>
-      </div>
+      </FormItem>
+      <FormItem
+        name="unfairPlay"
+        valueType="boolean"
+      >
+        <Checkbox label="Нечестная игра (позволяет ставить фигуру на фигуру противника)" />
+      </FormItem>
+      <FormItem
+        name="firstTurnSymbol"
+        valueType="boolean"
+      >
+        <Checkbox label="Начать за крестики" />
+      </FormItem>
+      <Buttons form={useForm} formattedValues={formattedValues} />
     </Form>
   );
 };

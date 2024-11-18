@@ -1,3 +1,3 @@
-const slice = (arr: any[], start: number, end?: number) => arr.slice(start, end);
+const slice = <T>(arr: T[], start: number, end?: number) => arr.slice(start, end);
 
 export default slice;

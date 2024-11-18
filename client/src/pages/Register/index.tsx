@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // constants
@@ -12,8 +12,9 @@ import makeFormStore from '@utils/makeFormStore';
 import styles from '@pages/Register/Register.module.scss';
 
 // components
-import Button from '@components/Button';
-import Form from '@components/Form';
+import Form, { OnSubmitFormProps } from '@components/Form';
+import Buttons from '@pages/Register/Buttons';
+import FormItem from '@components/Form/FormItem';
 import Input from '@components/Input';
 
 // api
@@ -31,7 +32,7 @@ const useForm = makeFormStore({
   },
   password: { defaultValidators: ['required'], valueType: 'string', minLength: 6 },
   repeatPassword: { defaultValidators: ['required'], valueType: 'string', minLength: 6, equalTo: 'password' },
-});
+}, 'registerForm');
 
 const Register = () => {
   const navigate = useNavigate();
@@ -40,23 +41,7 @@ const Register = () => {
 
   const [error, setError] = useState('');
 
-  const values = useForm(state => state.values);
-  const errors = useForm(state => state.errors);
-  const setValues = useForm(state => state.setValues);
-  const validate = useForm(state => state.validate);
-  const clearForm = useForm(state => state.clearForm);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError('');
-    setValues({
-      [e.target.name]: e.target.value,
-    }, false);
-  };
-
-  const onSubmit = () => {
-    validate();
-    const { isValid } = useForm.getState();
-    if (!isValid) return;
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps) => {
     AuthApi.register({
       email: String(values.email),
       password: String(values.password),
@@ -68,57 +53,43 @@ const Register = () => {
         setError(data.error.message);
       }
     });
-  };
-
-  useEffect(() => {
-    return () => {
-      clearForm();
-    };
   }, []);
 
   return (
     <div className={styles.root}>
-      <Form className={styles.form} onSubmit={onSubmit}>
-        <Input
-          autoComplete="email"
-          autoCorrect="off"
-          className={styles.input}
-          error={errors.email}
-          id="email"
-          label="Email"
-          name="email"
-          onChange={onChange}
-          required
-          value={String(values.email)}
-        />
-        <Input
-          autoComplete="password"
-          autoCorrect="off"
-          className={styles.input}
-          error={errors.password}
-          id="password"
-          label="Password"
-          name="password"
-          onChange={onChange}
-          required
-          value={String(values.password)}
-        />
-        <Input
-          autoComplete="repeatPassword"
-          autoCorrect="off"
-          className={styles.input}
-          error={errors.repeatPassword}
-          id="repeatPassword"
-          label="Repeat password"
-          name="repeatPassword"
-          onChange={onChange}
-          required
-          value={String(values.repeatPassword)}
-        />
+      <Form className={styles.form} form={useForm} onSubmit={onSubmit}>
+        <FormItem name="email" needValidate={false}>
+          <Input
+            autoComplete="email"
+            autoCorrect="off"
+            className={styles.input}
+            id="email"
+            label="Email"
+            required
+          />
+        </FormItem>
+        <FormItem name="password" needValidate={false}>
+          <Input
+            autoComplete="password"
+            autoCorrect="off"
+            className={styles.input}
+            id="password"
+            label="Пароль"
+            required
+          />
+        </FormItem>
+        <FormItem name="repeatPassword" needValidate={false}>
+          <Input
+            autoComplete="repeatPassword"
+            autoCorrect="off"
+            className={styles.input}
+            id="repeatPassword"
+            label="Повторите пароль"
+            required
+          />
+        </FormItem>
         {error && <div className={styles.error}>{error}</div>}
-        <div className={styles.buttons}>
-          <Button type="submit">Зарегистрироваться</Button>
-        </div>
+        <Buttons />
       </Form>
     </div>
   );

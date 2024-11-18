@@ -5,8 +5,10 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'rea
 import useStore from '@store/index';
 
 // utils
-import createWebSocketMessage, { MyWebSocketEvents } from '@utils/ws';
-import createGameSocket from '@utils/createSocket';
+import createWebSocketMessage, {
+  MyWebSocketEvents,
+  createGameSocket,
+} from '@utils/ws-operations';
 
 export interface SocketComponentProps {
   handleClose: () => void;
