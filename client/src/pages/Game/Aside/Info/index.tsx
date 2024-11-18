@@ -1,8 +1,5 @@
-// vendor imports
-import { useShallow } from 'zustand/react/shallow';
-
 // react
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 // styles
 import styles from '@pages/Game/Aside/Info/Info.module.scss';
@@ -17,45 +14,47 @@ type Props = {
 
 };
 
-const Info: FC<Props> = () => {
-  const {
-    isFinished,
-    turnSymbol,
-    itemsForWin,
-    unfairPlay,
-    firstTurnSymbol,
-  } = useStore(useShallow(
-    ({
-      isFinished,
-      turnSymbol,
-      itemsForWin,
-      unfairPlay,
-      firstTurnSymbol,
-    }) => ({
-      isFinished,
-      turnSymbol,
-      itemsForWin,
-      unfairPlay,
-      firstTurnSymbol,
-    }),
-  ));
+const FirstInfoBlock = memo(() => {
+  const isFinished = useStore(state => state.isFinished);
+  const turnSymbol = useStore(state => state.turnSymbol);
 
+  return (
+    <div className={styles.infoBlock}>
+      {!isFinished ? (
+        <>
+          Текущий ход:<Symbol symbol={turnSymbol} />
+        </>
+      ) :
+        <>Игра окончена! Победа <Symbol symbol={isFinished} /></>}
+    </div>
+  );
+});
+
+const SecondInfoBlock = memo(() => {
+  const firstTurnSymbol = useStore(state => state.firstTurnSymbol);
+  return <div className={styles.infoBlock}>Вы играете за: <Symbol symbol={firstTurnSymbol} /></div>;
+});
+
+const ThirdInfoBlock = memo(() => {
+  const unfairPlay = useStore(state => state.unfairPlay);
+  return <div className={styles.infoBlock}>Нечестная игра: {unfairPlay ? 'Да' : 'Нет'}</div>;
+});
+
+const FourthInfoBlock = memo(() => {
+  const itemsForWin = useStore(state => state.itemsForWin);
+  return <div className={styles.infoBlock}>Символов в ряд: {itemsForWin}</div>;
+});
+
+const Info: FC<Props> = () => {
   return (
     <div className={styles.root}>
       <div className={styles.turn}>
-        <div className={styles.infoBlock}>
-          {!isFinished ? (
-            <>
-              Текущий ход:<Symbol symbol={turnSymbol} />
-            </>
-          ) :
-            <>Игра окончена! Победа <Symbol symbol={isFinished} /></>}
-        </div>
-        <div className={styles.infoBlock}>Вы играете за: <Symbol symbol={firstTurnSymbol} /></div>
+        <FirstInfoBlock />
+        <SecondInfoBlock />
       </div>
       <div className={styles.shortSettings}>
-        <div className={styles.infoBlock}>Нечестная игра: {unfairPlay ? 'Да' : 'Нет'}</div>
-        <div className={styles.infoBlock}>Символов в ряд: {itemsForWin}</div>
+        <ThirdInfoBlock />
+        <FourthInfoBlock />
       </div>
     </div>
   );

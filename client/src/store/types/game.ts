@@ -1,3 +1,10 @@
+type IHistoryItem = {
+  position: string,
+  turnSymbol: 'X' | 'O',
+  turnCount: number,
+  cellIndex: number
+};
+
 type GameState = {
   turnSymbol: 'X' | 'O',
   isFinished: null | 'X' | 'O',
@@ -5,12 +12,7 @@ type GameState = {
   turnCount: number,
   maxTurnCount: number,
   position: string,
-  history: {
-    position: string,
-    turnSymbol: 'X' | 'O',
-    turnCount: number,
-    cellIndex: number
-  }[],
+  history: IHistoryItem[],
 };
 
 type GameAction = {
@@ -23,4 +25,5 @@ type GameAction = {
 export type {
   GameAction,
   GameState,
+  IHistoryItem,
 };

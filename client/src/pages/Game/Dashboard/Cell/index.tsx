@@ -40,7 +40,17 @@ const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
     if (symbol !== turnSymbol && (unfairPlay || symbol === '_')) {
       setPosition(cellIndex);
     }
-  }, [turnCount, isOnline]);
+  }, [
+    isFinished,
+    isOnline,
+    firstTurnSymbol,
+    turnSymbol,
+    maxTurnCount,
+    turnCount,
+    symbol,
+    unfairPlay,
+    cellIndex,
+  ]);
 
   return (
     <div
