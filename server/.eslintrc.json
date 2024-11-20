@@ -24,6 +24,8 @@
     "no-underscore-dangle": "off",
     "no-use-before-define": "off",
     "no-constructor-return": "off",
+    "class-methods-use-this": "off",
+    "no-redeclare": "off",
     "no-fallthrough": "off"
   }
 }

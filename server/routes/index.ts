@@ -5,9 +5,12 @@ import { Router } from 'express';
 import authRoutes from './auth/index.js';
 import gameRoutes from './game/index.js';
 
+// constants
+import { pathnameAuthRoutePrefix, pathnameGameRoutePrefix } from '../constants/pathnames.js';
+
 const router = Router();
 
-router.use('/auth', authRoutes);
-router.use('/game', gameRoutes);
+router.use(pathnameAuthRoutePrefix, authRoutes);
+router.use(pathnameGameRoutePrefix, gameRoutes);
 
 export default router;

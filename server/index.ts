@@ -15,9 +15,6 @@ import config from './config/config.js';
 // routes
 import routes from './routes/index.js';
 
-// middleware
-import needAuth from './middleware/auth.js';
-
 // ws
 import ExpressWs from './instances/ws.js';
 import wsRouters from './ws/index.js';
@@ -51,12 +48,18 @@ app.use(
   }),
 );
 
-const { expressWsApp } = new ExpressWs(app);
+const startWS = () => {
+  try {
+    const expressWsApp = new ExpressWs(app).getExpressWsApp();
+    wsRouters(expressWsApp);
+  } catch (error) {
+    startWS();
+  }
+};
 
-if (expressWsApp) {
-  wsRouters(expressWsApp);
-}
-app.use(needAuth, routes);
+startWS();
+
+app.use(routes);
 
 async function start() {
   try {

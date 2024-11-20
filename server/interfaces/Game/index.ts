@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 type IGame = {
   owner: string;
-  guest: string;
+  guest: string | null;
 
   createdAt: Date;
 
