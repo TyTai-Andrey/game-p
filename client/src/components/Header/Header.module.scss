@@ -22,10 +22,6 @@
 
     list-style: none;
 
-    @media (max-width: 500px) {
-      justify-content: flex-start;
-    }
-
     .item {
       display: flex;
       align-items: center;

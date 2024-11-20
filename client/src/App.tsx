@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 // pages
 import Game from '@pages/Game';
+import OnlineGame from '@pages/OnlineGame';
 import Register from '@pages/Register';
 import Settings from '@pages/Settings';
 
@@ -37,6 +38,7 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route element={<Game />} path={pathnames.main} />
+        <Route element={<OnlineGame />} path={`${pathnames.onlineGame}:id`} />
         <Route element={<Settings />} path={pathnames.settings} />
         <Route element={<Register />} path={pathnames.register} />
         <Route element={<Navigate replace to={pathnames.settings} />} path="*" />

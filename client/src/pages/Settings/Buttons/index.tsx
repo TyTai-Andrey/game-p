@@ -37,7 +37,7 @@ const Buttons: FC<Props> = ({ formattedValues, form }) => {
 
     if (isResponse(response)) {
       setSettings(formattedValues(values, true));
-      navigate(`${pathnames.main}?gameId=${response.gameId}`);
+      navigate(`${pathnames.onlineGame}${response.gameId}`);
     }
   }, []);
   return (

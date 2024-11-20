@@ -30,6 +30,10 @@ const items = [
     text: 'Игра',
   },
   {
+    path: pathnames.onlineGame,
+    text: 'Онлайн игра',
+  },
+  {
     path: pathnames.settings,
     text: 'Настройки',
   },
@@ -37,6 +41,7 @@ const items = [
 
 const Header = () => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
+  const lastOnlineGame = useStore(state => state.lastOnlineGame);
   const logout = useStore(state => state.logout);
   const { openModal } = useModal();
   const location = useLocation();
@@ -59,15 +64,30 @@ const Header = () => {
     <header className={styles.root}>
       <ul className={styles.list}>
         {
-          items.map(item => (
-            <li className={styles.item} key={item.text}>
-              <Link
-                className={classNames(styles.link, { [styles.active]: location.pathname === item.path })}
-                to={item.path}
-              >{item.text}
-              </Link>
-            </li>
-          ))
+          items.map((item) => {
+            const isActive = item.path === pathnames.main ?
+              item.path === location.pathname :
+              new RegExp(item.path).test(location.pathname);
+
+            const path = item.path === pathnames.onlineGame ?
+              `${pathnames.onlineGame}${lastOnlineGame}` :
+              item.path;
+
+            if (item.path === pathnames.onlineGame && !lastOnlineGame) return null;
+
+            return (
+              <li className={styles.item} key={item.text}>
+                <Link
+                  className={classNames(styles.link, {
+                    [styles.active]: isActive,
+                  })}
+                  to={path}
+                >
+                  {item.text}
+                </Link>
+              </li>
+            );
+          })
         }
       </ul>
       {authButton}

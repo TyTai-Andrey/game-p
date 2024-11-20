@@ -13,9 +13,7 @@ import Cell from '@pages/Game/Dashboard/Cell';
 // store
 import useStore from '@store/index';
 
-export type Props = {
-
-};
+export type Props = {};
 
 const Dashboard: FC<Props> = () => {
   const {

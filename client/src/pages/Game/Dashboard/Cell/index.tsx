@@ -26,6 +26,7 @@ const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
   const { firstTurnSymbol, isOnline } = useStore(useShallow(
     ({ firstTurnSymbol, isOnline }) => ({ firstTurnSymbol, isOnline }),
   ));
+
   const isFinished = useStore(state => state.isFinished);
   const unfairPlay = useStore(state => state.unfairPlay);
 
@@ -41,9 +42,9 @@ const Cell: FC<Props> = ({ cellIndex, symbol, highlighted }) => {
       setPosition(cellIndex);
     }
   }, [
-    isFinished,
     isOnline,
     firstTurnSymbol,
+    isFinished,
     turnSymbol,
     maxTurnCount,
     turnCount,

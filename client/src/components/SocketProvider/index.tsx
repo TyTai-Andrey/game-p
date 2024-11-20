@@ -109,21 +109,18 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
             }
           }
 
-          if (event === MyWebSocketEvents.CONNECT) {
+          if ([
+            MyWebSocketEvents.TURN,
+            MyWebSocketEvents.CONNECT,
+            MyWebSocketEvents.CONNECT_FRIEND,
+            MyWebSocketEvents.DISCONNECT,
+          ].includes(event)) {
             setState(socketData);
           }
 
-          if (event === MyWebSocketEvents.TURN) {
-            setState(socketData);
-          }
+          if (event === MyWebSocketEvents.CONNECT_FRIEND) { }
 
-          if (event === MyWebSocketEvents.CONNECT_FRIEND) {
-            setState(socketData);
-          }
-
-          if (event === MyWebSocketEvents.DISCONNECT) {
-            setState(socketData);
-          }
+          if (event === MyWebSocketEvents.DISCONNECT) { }
         };
       }
     };
@@ -137,11 +134,13 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = useStore.subscribe((state, prevState) => {
-      const isRestart = (state.maxTurnCount === -1 && state.turnCount === -1);
-      const hasTurn = (state.maxTurnCount > prevState.maxTurnCount) ||
-        (state.history.length < prevState.history.length);
+      const isRestart = ((state.maxTurnCount === -1 && state.turnCount === -1) &&
+        (state.history.length < prevState.history.length));
+
+      const isTurn = (state.maxTurnCount > prevState.maxTurnCount);
       const isMyTurn = state.firstTurnSymbol === prevState.turnSymbol;
-      if (hasTurn && (isMyTurn || isRestart) && socket) {
+
+      if (((isTurn && isMyTurn) || isRestart) && socket) {
         socket.send(createWebSocketMessage({
           event: MyWebSocketEvents.TURN,
           data: state,

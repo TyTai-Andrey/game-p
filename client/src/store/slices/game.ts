@@ -20,6 +20,7 @@ const initGameState: GameState = {
 
 const createGameSlice: CreateGameSlice = set => ({
   ...initGameState,
+  lastOnlineGame: null,
   nextTurn: () => set(({
     history, maxTurnCount, turnCount,
   }) => {

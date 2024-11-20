@@ -14,6 +14,7 @@ type GameState = {
   position: string,
   history: IHistoryItem[],
   clientsOnline: number,
+  lastOnlineGame?: string | null,
 };
 
 type GameAction = {

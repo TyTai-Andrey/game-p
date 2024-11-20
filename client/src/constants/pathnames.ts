@@ -1,6 +1,7 @@
 const pathnames = {
   main: '/',
   settings: '/settings',
+  onlineGame: '/game/',
   register: '/register',
 };
 
