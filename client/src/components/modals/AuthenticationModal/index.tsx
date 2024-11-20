@@ -71,7 +71,7 @@ const AuthenticationModal: FC<AuthenticationModalProps> = ({ isOpen, handleClose
             required
           />
         </FormItem>
-        <FormItem name="password">
+        <FormItem name="password" needValidate={false}>
           <Input
             autoComplete="password"
             autoCorrect="off"

@@ -87,13 +87,7 @@
     "jsx-a11y/control-has-associated-label": "off",
     "no-empty": "off",
     "no-nested-ternary": "off",
-    "no-use-before-define": [
-      "warn",
-      {
-        "functions": false,
-        "classes": true
-      }
-    ],
+    "no-use-before-define": "off",
     "no-underscore-dangle": "off",
     "no-mixed-operators": [
       "error",

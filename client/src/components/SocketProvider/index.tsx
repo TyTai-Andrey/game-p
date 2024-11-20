@@ -112,9 +112,13 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           }
 
           if (event === MyWebSocketEvents.TURN) {
-            console.log(socketData);
-
             setState(socketData);
+          }
+
+          if (event === MyWebSocketEvents.CONNECT_FRIEND) {
+          }
+
+          if (event === MyWebSocketEvents.DISCONNECT) {
           }
         };
       }

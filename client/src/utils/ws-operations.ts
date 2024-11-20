@@ -6,8 +6,10 @@ import type { SettingsState } from '@store/types/settings';
 
 enum MyWebSocketEvents {
   CONNECT = 'connect',
+  CONNECT_FRIEND = 'connect_friend',
   CONNECTION = 'connection',
   TURN = 'turn',
+  DISCONNECT = 'disconnect',
 }
 
 type WSGameDate = {
