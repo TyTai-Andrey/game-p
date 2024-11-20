@@ -1,7 +1,7 @@
 type Nullable<T> = T | null;
 
 // api
-type DefaultError = { errors: string[], message: string };
+type DefaultError = { errors: { [key: string]: string }, message: string };
 type ITypeOrError<T> = T | { error: DefaultError };
 
 // auth api

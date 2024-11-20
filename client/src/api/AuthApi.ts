@@ -5,6 +5,9 @@ import { AxiosError } from 'axios';
 // api
 import BaseApi from '@api/BaseApi';
 
+// utils
+import { serverError } from '@utils/notifications-operations';
+
 class AuthApi {
   static async register(data: AuthData): Promise<ITypeOrError<AuthResponse>> {
     const client = BaseApi.getClient();
@@ -18,6 +21,8 @@ class AuthApi {
       const response = await client(options);
       return response.data;
     } catch (error) {
+      serverError(error);
+
       return { error: (error as AxiosError)?.response?.data as DefaultError };
     }
   }
@@ -34,6 +39,7 @@ class AuthApi {
       const response = await client(options);
       return response.data;
     } catch (error) {
+      serverError(error);
       return { error: (error as AxiosError)?.response?.data as DefaultError };
     }
   }
@@ -48,6 +54,7 @@ class AuthApi {
     try {
       await client(options);
     } catch (error) {
+      serverError(error);
     }
 
     callback();

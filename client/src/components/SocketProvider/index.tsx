@@ -9,6 +9,7 @@ import createWebSocketMessage, {
   MyWebSocketEvents,
   createGameSocket,
 } from '@utils/ws-operations';
+import { errorNotification, successNotification } from '@utils/notifications-operations';
 
 export interface SocketComponentProps {
   handleClose: () => void;
@@ -95,7 +96,6 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           const socketMessage = JSON.parse(e.data);
           const { event } = socketMessage || {};
           const { data: socketData } = socketMessage || {};
-          console.log(socketData);
 
           if (event === MyWebSocketEvents.CONNECTION) {
             const { success } = socketData || {};
@@ -106,6 +106,8 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
               socket.send(createWebSocketMessage({
                 event: MyWebSocketEvents.CONNECT,
               }));
+            } else {
+              errorNotification('Не удалось подключиться к игре');
             }
           }
 
@@ -118,9 +120,13 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
             setState(socketData);
           }
 
-          if (event === MyWebSocketEvents.CONNECT_FRIEND) { }
+          if (event === MyWebSocketEvents.CONNECT_FRIEND) {
+            successNotification('Пользователь присоединился к игре');
+          }
 
-          if (event === MyWebSocketEvents.DISCONNECT) { }
+          if (event === MyWebSocketEvents.DISCONNECT) {
+            errorNotification('Пользователь вышел из игры');
+          }
         };
       }
     };
