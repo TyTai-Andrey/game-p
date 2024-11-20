@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
 
-  background-color: aqua;
+  background-color: rgba(89, 253, 253, 0.685);
 
   button {
     position: absolute;
@@ -35,7 +35,7 @@
         text-decoration: none;
 
         &.active {
-          color: rgb(255, 174, 0);
+          color: rgb(0, 47, 255);
         }
       }
     }

@@ -49,7 +49,17 @@
     }
   }
 
-  .turn {
+  .copyLink {
+    width: 100%;
+    background-color: rgb(77, 243, 77);
+    color: rgb(70, 70, 70);
+
+    &:hover {
+      background-color: rgb(39, 219, 39);
+    }
+  }
+
+  .turn, .onlineInfo {
     margin-bottom: 10px;
   }
 

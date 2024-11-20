@@ -33,9 +33,10 @@ const serverError = (error: AxiosError | DefaultError | unknown) => {
   errorNotification(message, errorMessage);
 };
 
-const successNotification = (message: string) => {
+const successNotification = (title: string, message?: string) => {
   Store.addNotification({
-    title: message,
+    title,
+    message,
     type: 'success',
     ...baseParams,
   });

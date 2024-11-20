@@ -1,5 +1,8 @@
+// vendor imports
+import classNames from 'classnames';
+
 // react
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 
 // styles
 import styles from '@pages/Game/Aside/Info/Info.module.scss';
@@ -8,8 +11,10 @@ import styles from '@pages/Game/Aside/Info/Info.module.scss';
 import useStore from '@store/index';
 
 // components
+import Button from '@components/Button';
 import Symbol from '@components/Symbol';
-import classNames from 'classnames';
+import copyTextToClipboard from '@utils/copyTextToClipboard';
+import { useLocation } from 'react-router-dom';
 
 type Props = {
 
@@ -46,25 +51,46 @@ const FourthInfoBlock = memo(() => {
   return <div className={styles.infoBlock}>Символов в ряд: {itemsForWin}</div>;
 });
 
-const Info: FC<Props> = () => {
-  const clientsOnline = useStore(state => state.clientsOnline);
-  const isOnline = useStore(state => state.isOnline);
+const OnlineInfoBlock = memo(() => {
+  const location = useLocation();
+  console.log(location);
 
-  return (
-    <div className={styles.root}>
-      {isOnline && <div className={classNames(styles.infoBlock, styles.clientsOnline)}>Игроков в сети: {clientsOnline}</div>}
-      <div className={styles.settingsWrapper}>
-        <div className={styles.turn}>
-          <FirstInfoBlock />
-          <SecondInfoBlock />
-        </div>
-        <div className={styles.shortSettings}>
-          <ThirdInfoBlock />
-          <FourthInfoBlock />
-        </div>
+  const isOnline = useStore(state => state.isOnline);
+  const clientsOnline = useStore(state => state.clientsOnline);
+
+  const onClick = useCallback(() => {
+    copyTextToClipboard(`${process.env.REACT_APP_CLIENT_BASE_URL}${location.pathname}`);
+  }, []);
+
+  return isOnline ? (
+    <div className={styles.onlineInfo}>
+      <div className={classNames(styles.infoBlock, styles.clientsOnline)}>
+        Игроков в сети: {clientsOnline}
+      </div>
+      <Button
+        className={classNames(styles.infoBlock, styles.copyLink)}
+        onClick={onClick}
+      >
+        Скопировать ссылку
+      </Button>
+    </div>
+  ) : null;
+});
+
+const Info: FC<Props> = () => (
+  <div className={styles.root}>
+    <OnlineInfoBlock />
+    <div className={styles.settingsWrapper}>
+      <div className={styles.turn}>
+        <FirstInfoBlock />
+        <SecondInfoBlock />
+      </div>
+      <div className={styles.shortSettings}>
+        <ThirdInfoBlock />
+        <FourthInfoBlock />
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default Info;
