@@ -1,13 +1,12 @@
-// express
-import expressWs from 'express-ws';
-
 // interfaces
 import IGame, { IGameDocument } from '../interfaces/Game/index.js';
 
 enum MyWebSocketEvents {
   TURN = 'turn',
   CONNECT = 'connect',
+  CONNECT_FRIEND = 'connect_friend',
   CONNECTION = 'connection',
+  DISCONNECT = 'disconnect',
 }
 
 type MSG = {
@@ -60,64 +59,29 @@ const getGameDataForSend = (data: IGameDocument, isOwner?: boolean) => {
   });
 };
 
-type WebSocket = Parameters<expressWs.WebsocketRequestHandler>[0] & {
-  clientId?: string
-  gameId?: string
+type IConnectionWSMessage = ({
+  event: MyWebSocketEvents.CONNECTION;
+  data: { success: boolean; message?: string };
+});
+
+function createConnectionWSMessage(message: string, isJson: false, success?: boolean): IConnectionWSMessage;
+function createConnectionWSMessage(message: string, isJson?: true, success?: boolean): string;
+function createConnectionWSMessage(message: string, isJson: boolean = true, success: boolean = false) {
+  const data: IConnectionWSMessage = {
+    event: MyWebSocketEvents.CONNECTION,
+    data: { success, message },
+  };
+
+  return isJson ? JSON.stringify(data) : data;
 }
-type WebSocketServer = ReturnType<expressWs.Instance['getWss']>
-type WebSocketServerWithPatchClient = Omit<WebSocketServer, 'clients'> & { clients: Set<WebSocket> }
-
-const getWSHelpers = (wss: WebSocketServerWithPatchClient, ws: WebSocket, gameId: string) => {
-  const sendForAllClient = (data: any) => {
-    wss.clients.forEach((client) => {
-      if (client.readyState === ws.OPEN) {
-        client.send(JSON.stringify(data));
-      }
-    });
-  };
-
-  const actionForThisClient = (callback: any) => {
-    wss?.clients?.forEach((client) => {
-      if (client === ws && client?.readyState === ws?.OPEN) {
-        callback();
-      }
-    });
-  };
-
-  const sendForThisClient = (data: any) => {
-    wss.clients.forEach((client) => {
-      if (client === ws && client.readyState === ws.OPEN) {
-        client.send(JSON.stringify(data));
-      }
-    });
-  };
-
-  const sendForClientById = (data: any, id: string) => {
-    wss.clients.forEach((client) => {
-      if (client.clientId === id && client.gameId === gameId) {
-        client.send(JSON.stringify(data));
-      }
-    });
-  };
-
-  return {
-    actionForThisClient,
-    sendForAllClient,
-    sendForThisClient,
-    sendForClientById,
-  };
-};
 
 export type {
   MSG,
   Settings,
-  WebSocket,
-  WebSocketServer,
-  WebSocketServerWithPatchClient,
 };
 export {
-  getWSHelpers,
   getGameDataForBD,
   getGameDataForSend,
   MyWebSocketEvents,
+  createConnectionWSMessage,
 };

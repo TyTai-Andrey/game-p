@@ -7,50 +7,62 @@ import Game from '../models/Game.js';
 // utils
 import { validateToken, isSuccessValidateToken } from '../utils/token-operations.js';
 import {
-  getWSHelpers,
   getGameDataForBD,
   MyWebSocketEvents,
   getGameDataForSend,
+  createConnectionWSMessage,
 } from '../utils/ws-operations.js';
-import type { MSG, WebSocket, WebSocketServerWithPatchClient } from '../utils/ws-operations.js';
+import type { MSG } from '../utils/ws-operations.js';
 
 // interfaces
 import { IGameDocument } from '../interfaces/Game/index.js';
+import ExpressWs, { WebSocket } from '../instances/ws.js';
 
 const getIdAndTypeThisGame = (game: IGameDocument, userId: string) => {
   const ownerId = game?.owner?.toString?.();
-  const guestId = game?.guest?.toString?.();
-
   const hasGuest = game.guest;
+  const guestId = hasGuest && game?.guest?.toString?.();
+
   const isOwner = ownerId === userId;
   const isGuest = hasGuest && guestId === userId;
+  const friendId = isGuest ? ownerId : guestId;
 
   return {
-    hasGuest, isOwner, isGuest, guestId, ownerId,
+    hasGuest,
+    isOwner,
+    isGuest,
+    guestId,
+    ownerId,
+    friendId,
   };
 };
 
 const wsRouters = async (ws: expressWs.Instance) => {
-  const { app: appWS, getWss } = ws;
-  const wss: WebSocketServerWithPatchClient = getWss();
+  const { app: appWS } = ws;
 
   appWS.ws('/game/:id', async (ws: WebSocket, req) => {
     const { id } = req.params;
     try {
-      const game = await Game.findById(id);
+      if (!id) throw new Error('Game not found');
+      const game = await Game.findById(id).catch(() => null);
       if (!game) throw new Error('Game not found');
 
-      ws.send(JSON.stringify({ event: MyWebSocketEvents.CONNECTION, data: { success: true } }));
+      ws.send(createConnectionWSMessage('Соединение установлено', true, true));
     } catch (error) {
-      ws.send(JSON.stringify({ event: MyWebSocketEvents.CONNECTION, data: { success: false } }));
+      ws.send?.(createConnectionWSMessage((error as Error).message));
       ws.close();
     }
 
     const {
-      actionForThisClient,
       sendForThisClient,
       sendForClientById,
-    } = getWSHelpers(wss, ws, id);
+    } = new ExpressWs().getClientHelpers(ws);
+
+    ws.on('close', () => {
+      if (ws.friendId) {
+        sendForClientById({ event: MyWebSocketEvents.DISCONNECT }, ws.friendId);
+      }
+    });
 
     ws.on('message', async (msg) => {
       try {
@@ -60,33 +72,56 @@ const wsRouters = async (ws: expressWs.Instance) => {
         const validate = await validateToken(token);
 
         if (!isSuccessValidateToken(validate)) {
-          actionForThisClient(ws.close);
+          ws.close();
           return;
+        }
+        const game = await Game.findOne({ _id: id });
+        if (!game) throw new Error('Игра не найдена');
+
+        const {
+          hasGuest,
+          isOwner,
+          isGuest,
+          friendId,
+        } = getIdAndTypeThisGame(game, validate.user.id);
+
+        ws.clientId = validate.user.id.toString();
+        ws.gameId = game._id.toString();
+        if (friendId) {
+          ws.friendId = friendId;
         }
 
         switch (event) {
           case MyWebSocketEvents.CONNECT: {
-            if (!id) actionForThisClient(ws.close);
-
-            const game = await Game.findOne({ _id: id });
-            if (!game) throw new Error('Game not found');
-
-            ws.clientId = validate.user.id.toString();
-            ws.gameId = game._id.toString();
-
-            const { hasGuest, isOwner, isGuest } = getIdAndTypeThisGame(game, validate.user.id);
-
             if (isOwner || (isGuest)) {
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
                 data: getGameDataForSend(game, isOwner),
               });
+
+              if (ws.friendId) {
+                sendForClientById({
+                  event: MyWebSocketEvents.CONNECT_FRIEND,
+                  data: getGameDataForSend(game, isOwner),
+                }, ws.friendId);
+              }
               return;
             }
             if (!hasGuest) {
               await Game.findOneAndUpdate({ _id: game._id }, {
                 guest: validate.user.id,
               });
+              const myId = validate.user.id.toString();
+              ws.friendId = game.owner.toString();
+              new ExpressWs().getWss().clients.forEach((client) => {
+                if (ws !== client && client.gameId === game._id.toString()) {
+                  client.friendId = myId;
+                }
+              });
+              sendForClientById({
+                event: MyWebSocketEvents.CONNECT_FRIEND,
+                data: getGameDataForSend(game, isOwner),
+              }, game.owner.toString());
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
                 data: getGameDataForSend(game, isOwner),
@@ -98,15 +133,17 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
             const game = await Game.findOneAndUpdate({ _id: id }, {
               ...gameData,
-            }, { new: true });
+            }, { new: true }).catch(() => null);
 
-            if (!game) throw new Error('Game not found');
+            if (!game) throw new Error('Игра не найдена');
 
-            const { isOwner, ownerId, guestId } = getIdAndTypeThisGame(game, validate.user.id);
-            sendForClientById({
-              event: MyWebSocketEvents.TURN,
-              data: getGameDataForSend(game, !isOwner),
-            }, isOwner ? guestId : ownerId);
+            const { isOwner, friendId } = getIdAndTypeThisGame(game, validate.user.id);
+            if (friendId) {
+              sendForClientById({
+                event: MyWebSocketEvents.TURN,
+                data: getGameDataForSend(game, !isOwner),
+              }, friendId);
+            }
           }
           default: {
             break;
@@ -115,11 +152,8 @@ const wsRouters = async (ws: expressWs.Instance) => {
       } catch (error) {
         console.log(error);
 
-        sendForThisClient({
-          event: MyWebSocketEvents.CONNECTION,
-          data: { success: false },
-        });
-        actionForThisClient(() => ws?.close?.());
+        ws?.send?.(createConnectionWSMessage((error as Error).message));
+        ws?.close?.();
       }
     });
   });
