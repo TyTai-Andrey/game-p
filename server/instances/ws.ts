@@ -39,6 +39,16 @@ class ExpressWs {
     return ExpressWs.instance.expressWsApp?.app;
   }
 
+  getClientsThisGame(gameId: string) {
+    const clients = new Set<WebSocket>();
+    ExpressWs.instance.getWss().clients.forEach((client) => {
+      if (client.gameId === gameId) {
+        clients.add(client);
+      }
+    });
+    return clients;
+  }
+
   sendForClientByFuncCondition(func: (client: WebSocket) => boolean, data: any) {
     ExpressWs.instance.getWss().clients.forEach((client) => {
       if (func(client)) {

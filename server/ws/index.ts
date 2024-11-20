@@ -93,16 +93,19 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
         switch (event) {
           case MyWebSocketEvents.CONNECT: {
+            const clientsThisGame = new ExpressWs().getClientsThisGame(game._id.toString());
             if (isOwner || (isGuest)) {
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
-                data: getGameDataForSend(game, isOwner),
+                data: {
+                  ...getGameDataForSend(game, isOwner),
+                  clientsOnline: clientsThisGame.size,
+                },
               });
 
               if (ws.friendId) {
                 sendForClientById({
                   event: MyWebSocketEvents.CONNECT_FRIEND,
-                  data: getGameDataForSend(game, isOwner),
                 }, ws.friendId);
               }
               return;
@@ -120,11 +123,13 @@ const wsRouters = async (ws: expressWs.Instance) => {
               });
               sendForClientById({
                 event: MyWebSocketEvents.CONNECT_FRIEND,
-                data: getGameDataForSend(game, isOwner),
               }, game.owner.toString());
               sendForThisClient({
                 event: MyWebSocketEvents.CONNECT,
-                data: getGameDataForSend(game, isOwner),
+                data: {
+                  ...getGameDataForSend(game, isOwner),
+                  clientsOnline: clientsThisGame.size,
+                },
               });
             }
           }
