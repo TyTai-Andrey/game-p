@@ -65,7 +65,7 @@ const wsRouters = async (ws: expressWs.Instance) => {
         sendForClientById({
           event: MyWebSocketEvents.DISCONNECT,
           data: {
-            clientsOnline: clientsThisGame,
+            clientsOnline: clientsThisGame.size,
           },
         }, ws.friendId);
       }

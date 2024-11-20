@@ -94,6 +94,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           const socketMessage = JSON.parse(e.data);
           const { event } = socketMessage || {};
           const { data: socketData } = socketMessage || {};
+          console.log(socketData);
 
           if (event === MyWebSocketEvents.CONNECTION) {
             const { success } = socketData || {};
@@ -116,9 +117,11 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
           }
 
           if (event === MyWebSocketEvents.CONNECT_FRIEND) {
+            setState(socketData);
           }
 
           if (event === MyWebSocketEvents.DISCONNECT) {
+            setState(socketData);
           }
         };
       }

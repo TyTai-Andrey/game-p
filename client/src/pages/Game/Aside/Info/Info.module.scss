@@ -3,21 +3,31 @@
   
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 
-  & > div {
-    width: 49%;
+  .clientsOnline {
+    width: 100%;
   }
 
-  @media (max-width: 1650px) {
-    flex-direction: column;
+  .settingsWrapper {
+    display: flex;
+    justify-content: space-between;
 
     & > div {
-      width: 100%;
+      width: 49%;
+    }
+    
+    @media (max-width: 1650px) {
+      flex-direction: column;
+      
+      & > div {
+        width: 100%;
+      }
     }
 
-    .infoBlock:not(:last-child) {
-      margin-bottom: 10px;
-    }
+  }
+  .infoBlock:not(:last-child) {
+    margin-bottom: 10px;
   }
 
   .infoBlock {

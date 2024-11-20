@@ -2,7 +2,7 @@ type IHistoryItem = {
   position: string,
   turnSymbol: 'X' | 'O',
   turnCount: number,
-  cellIndex: number
+  cellIndex: number,
 };
 
 type GameState = {
@@ -13,10 +13,12 @@ type GameState = {
   maxTurnCount: number,
   position: string,
   history: IHistoryItem[],
+  clientsOnline: number,
 };
 
 type GameAction = {
   setPosition: (cellIndex: number) => void,
+  setClientsOnline: (clientsOnline: number) => void,
   nextTurn: () => void,
   prevTurn: () => void,
   reset: (onlyPosition?: boolean) => void

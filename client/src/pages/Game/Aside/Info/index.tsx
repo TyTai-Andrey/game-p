@@ -9,6 +9,7 @@ import useStore from '@store/index';
 
 // components
 import Symbol from '@components/Symbol';
+import classNames from 'classnames';
 
 type Props = {
 
@@ -46,15 +47,21 @@ const FourthInfoBlock = memo(() => {
 });
 
 const Info: FC<Props> = () => {
+  const clientsOnline = useStore(state => state.clientsOnline);
+  const isOnline = useStore(state => state.isOnline);
+
   return (
     <div className={styles.root}>
-      <div className={styles.turn}>
-        <FirstInfoBlock />
-        <SecondInfoBlock />
-      </div>
-      <div className={styles.shortSettings}>
-        <ThirdInfoBlock />
-        <FourthInfoBlock />
+      {isOnline && <div className={classNames(styles.infoBlock, styles.clientsOnline)}>Игроков в сети: {clientsOnline}</div>}
+      <div className={styles.settingsWrapper}>
+        <div className={styles.turn}>
+          <FirstInfoBlock />
+          <SecondInfoBlock />
+        </div>
+        <div className={styles.shortSettings}>
+          <ThirdInfoBlock />
+          <FourthInfoBlock />
+        </div>
       </div>
     </div>
   );

@@ -15,13 +15,11 @@ const initGameState: GameState = {
   position: '_________',
   turnCount: -1,
   turnSymbol: 'X',
+  clientsOnline: 1,
 };
 
 const createGameSlice: CreateGameSlice = set => ({
-  history: [],
-  isFinished: null,
-  maxTurnCount: -1,
-  finishedIndexes: null,
+  ...initGameState,
   nextTurn: () => set(({
     history, maxTurnCount, turnCount,
   }) => {
@@ -33,7 +31,7 @@ const createGameSlice: CreateGameSlice = set => ({
 
     return { ...nextTurn };
   }),
-  position: '_________',
+  setClientsOnline: clientsOnline => set({ clientsOnline }),
   prevTurn: () => set(({
     history,
     reset,
@@ -78,8 +76,6 @@ const createGameSlice: CreateGameSlice = set => ({
     itemsForWin,
     cellIndex,
   })),
-  turnCount: -1,
-  turnSymbol: 'X',
 });
 
 export { initGameState };
