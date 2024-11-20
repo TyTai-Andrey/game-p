@@ -60,7 +60,14 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
     ws.on('close', () => {
       if (ws.friendId) {
-        sendForClientById({ event: MyWebSocketEvents.DISCONNECT }, ws.friendId);
+        const clientsThisGame = new ExpressWs().getClientsThisGame(id, true);
+
+        sendForClientById({
+          event: MyWebSocketEvents.DISCONNECT,
+          data: {
+            clientsOnline: clientsThisGame,
+          },
+        }, ws.friendId);
       }
     });
 
@@ -93,20 +100,28 @@ const wsRouters = async (ws: expressWs.Instance) => {
 
         switch (event) {
           case MyWebSocketEvents.CONNECT: {
-            const clientsThisGame = new ExpressWs().getClientsThisGame(game._id.toString());
+            const clientsThisGame = new ExpressWs().getClientsThisGame(id, true);
+
+            const dataForConnectFriendEvent = {
+              event: MyWebSocketEvents.CONNECT_FRIEND,
+              data: {
+                clientsOnline: clientsThisGame.size,
+              },
+            };
+
+            const dataForConnectEvent = {
+              event: MyWebSocketEvents.CONNECT,
+              data: {
+                ...getGameDataForSend(game, isOwner),
+                clientsOnline: clientsThisGame.size,
+              },
+            };
+
             if (isOwner || (isGuest)) {
-              sendForThisClient({
-                event: MyWebSocketEvents.CONNECT,
-                data: {
-                  ...getGameDataForSend(game, isOwner),
-                  clientsOnline: clientsThisGame.size,
-                },
-              });
+              sendForThisClient(dataForConnectEvent);
 
               if (ws.friendId) {
-                sendForClientById({
-                  event: MyWebSocketEvents.CONNECT_FRIEND,
-                }, ws.friendId);
+                sendForClientById(dataForConnectFriendEvent, ws.friendId);
               }
               return;
             }
@@ -121,16 +136,8 @@ const wsRouters = async (ws: expressWs.Instance) => {
                   client.friendId = myId;
                 }
               });
-              sendForClientById({
-                event: MyWebSocketEvents.CONNECT_FRIEND,
-              }, game.owner.toString());
-              sendForThisClient({
-                event: MyWebSocketEvents.CONNECT,
-                data: {
-                  ...getGameDataForSend(game, isOwner),
-                  clientsOnline: clientsThisGame.size,
-                },
-              });
+              sendForClientById(dataForConnectFriendEvent, game.owner.toString());
+              sendForThisClient(dataForConnectEvent);
             }
           }
           case MyWebSocketEvents.TURN: {

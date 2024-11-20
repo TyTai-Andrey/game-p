@@ -37,7 +37,10 @@ const getGameDataForSend = (data: IGameDocument, isOwner?: boolean) => {
   const history = JSON.parse(data.history);
 
   const {
-    dashboardSize, firstTurnSymbol: ownerTurnSymbol, unfairPlay, itemsForWin,
+    dashboardSize,
+    firstTurnSymbol: ownerTurnSymbol,
+    unfairPlay,
+    itemsForWin,
   } = settings as Settings;
 
   const guestTurnSymbol = ownerTurnSymbol === 'X' ? 'O' : 'X';

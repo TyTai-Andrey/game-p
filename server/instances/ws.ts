@@ -39,10 +39,10 @@ class ExpressWs {
     return ExpressWs.instance.expressWsApp?.app;
   }
 
-  getClientsThisGame(gameId: string) {
+  getClientsThisGame(gameId: string, onlyOnline?: boolean) {
     const clients = new Set<WebSocket>();
     ExpressWs.instance.getWss().clients.forEach((client) => {
-      if (client.gameId === gameId) {
+      if (client.gameId === gameId && (!onlyOnline || client.readyState === client.OPEN)) {
         clients.add(client);
       }
     });
