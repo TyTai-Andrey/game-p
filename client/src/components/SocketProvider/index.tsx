@@ -46,7 +46,8 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   const closeSocket = useCallback(() => {
     if (socket) {
-      socket.close();
+      socket?.close?.();
+      setState({ isOnline: false });
       setSocket(null);
       setSocketUuid(null);
       setConnected(false);

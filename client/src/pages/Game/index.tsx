@@ -30,7 +30,7 @@ export type Props = {};
 const Game: FC<Props> = () => {
   const isAuthenticated = useStore(state => state.isAuthenticated);
 
-  const { openSocket, connected, error } = useSocket();
+  const { openSocket, closeSocket, connected, error } = useSocket();
   const { openModal } = useModal();
 
   const location = useLocation();
@@ -43,7 +43,11 @@ const Game: FC<Props> = () => {
 
   useEffect(() => {
     if (gameId) openSocket(gameId);
-  }, [gameId, isAuthenticated]);
+
+    return () => {
+      closeSocket();
+    };
+  }, [gameId, isAuthenticated, closeSocket]);
 
   useLayoutEffect(() => {
     if (!isAuthenticated && !authorization.getToken() && gameId) {
