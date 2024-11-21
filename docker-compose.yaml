@@ -11,7 +11,6 @@ services:
     depends_on:
     - server
   server:
-    restart: always
     entrypoint:
         node build/index
     build:
@@ -25,7 +24,6 @@ services:
       - mongoDomain=mongodb
   mongodb:
     image: mongo
-    restart: always
     container_name: mongodb
     ports:
       - 27017:27017
