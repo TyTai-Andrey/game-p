@@ -12,7 +12,7 @@ import styles from '@components/Form/Form.module.scss';
 
 // components
 import FormItem from '@components/Form/FormItem';
-import FormProvider from './FormProvider';
+import FormProvider from '../providers/FormProvider';
 
 type OnSubmitFormProps<T extends FormType> = {
   event: React.FormEvent<HTMLFormElement>,

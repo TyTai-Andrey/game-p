@@ -3,7 +3,7 @@ import { FC, cloneElement, isValidElement, memo, useCallback, useContext, useMem
 
 // utils
 import { FieldFormValue, FormType, SettingsForm } from '@utils/makeFormStore';
-import { FormContext } from '../FormProvider';
+import { FormContext } from '../../providers/FormProvider';
 
 type Props = {
   children: React.ReactNode;

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 // local imports
 // components
-import { ModalContext } from '@components/ModalProvider';
+import { ModalContext } from '@components/providers/ModalProvider';
 
 const useModal = () => {
   const { closeModal, openModal } = useContext(ModalContext);

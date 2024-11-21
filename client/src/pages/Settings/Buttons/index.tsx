@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // components
 import Button from '@components/Button';
-import { FormContext } from '@components/Form/FormProvider';
+import { FormContext } from '@components/providers/FormProvider';
 
 // styles
 import styles from '@pages/Settings/Settings.module.scss';

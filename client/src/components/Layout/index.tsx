@@ -6,8 +6,8 @@ import styles from '@components/Layout/Layout.module.scss';
 
 // components
 import Header from '@components/Header';
-import ModalProvider from '@components/ModalProvider';
-import SocketProvider from '@components/SocketProvider';
+import ModalProvider from '@components/providers/ModalProvider';
+import SocketProvider from '@components/providers/SocketProvider';
 
 const Layout = () => (
   <SocketProvider>

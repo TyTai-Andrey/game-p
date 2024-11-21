@@ -8,7 +8,7 @@ import Form, { OnSubmitFormProps } from '@components/Form';
 import Buttons from '@components/modals/AuthenticationModal/Buttons';
 import Input from '@components/Input';
 import Modal from '@components/Modal';
-import { ModalComponentProps } from '@components/ModalProvider';
+import { ModalComponentProps } from '@components/providers/ModalProvider';
 
 // utils
 import isResponse from '@utils/check-types';
