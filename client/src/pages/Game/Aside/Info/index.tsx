@@ -1,8 +1,6 @@
-// vendor imports
-import classNames from 'classnames';
-
+/* eslint-disable sort-imports */
 // react
-import React, { FC, memo, useCallback } from 'react';
+import { FC } from 'react';
 
 // styles
 import styles from '@pages/Game/Aside/Info/Info.module.scss';
@@ -11,86 +9,41 @@ import styles from '@pages/Game/Aside/Info/Info.module.scss';
 import useStore from '@store/index';
 
 // components
-import Button from '@components/Button';
-import Symbol from '@components/Symbol';
-import copyTextToClipboard from '@utils/copyTextToClipboard';
-import { useLocation } from 'react-router-dom';
+import Row from '@components/Row';
+import FirstInfoBlock from '@pages/Game/Aside/Info/FirstInfoBlock';
+import SecondInfoBlock from '@pages/Game/Aside/Info/SecondInfoBlock';
+import ThirdInfoBlock from '@pages/Game/Aside/Info/ThirdInfoBlock';
+import FourthInfoBlock from '@pages/Game/Aside/Info/FourthInfoBlock';
+import FifthInfoBlock from '@pages/Game/Aside/Info/FifthInfoBlock';
+import SixthInfoBlock from '@pages/Game/Aside/Info/SixthInfoBlock';
 
-type Props = {
+type Props = {};
 
-};
-
-const FirstInfoBlock = memo(() => {
-  const isFinished = useStore(state => state.isFinished);
-  const turnSymbol = useStore(state => state.turnSymbol);
+const Info: FC<Props> = () => {
+  const isOnline = useStore(state => state.isOnline);
 
   return (
-    <div className={styles.infoBlock}>
-      {!isFinished ? (
-        <>
-          Текущий ход:<Symbol symbol={turnSymbol} />
-        </>
-      ) :
-        <>Игра окончена! Победа <Symbol symbol={isFinished} /></>}
-    </div>
-  );
-});
-
-const SecondInfoBlock = memo(() => {
-  const firstTurnSymbol = useStore(state => state.firstTurnSymbol);
-  return <div className={styles.infoBlock}>Вы играете за: <Symbol symbol={firstTurnSymbol} /></div>;
-});
-
-const ThirdInfoBlock = memo(() => {
-  const unfairPlay = useStore(state => state.unfairPlay);
-  return <div className={styles.infoBlock}>Нечестная игра: {unfairPlay ? 'Да' : 'Нет'}</div>;
-});
-
-const FourthInfoBlock = memo(() => {
-  const itemsForWin = useStore(state => state.itemsForWin);
-  return <div className={styles.infoBlock}>Символов в ряд: {itemsForWin}</div>;
-});
-
-const OnlineInfoBlock = memo(() => {
-  const location = useLocation();
-  console.log(location);
-
-  const isOnline = useStore(state => state.isOnline);
-  const clientsOnline = useStore(state => state.clientsOnline);
-
-  const onClick = useCallback(() => {
-    copyTextToClipboard(`${process.env.REACT_APP_CLIENT_BASE_URL}${location.pathname}`);
-  }, []);
-
-  return isOnline ? (
-    <div className={styles.onlineInfo}>
-      <div className={classNames(styles.infoBlock, styles.clientsOnline)}>
-        Игроков в сети: {clientsOnline}
-      </div>
-      <Button
-        className={classNames(styles.infoBlock, styles.copyLink)}
-        onClick={onClick}
+    <Row vertical>
+      <Row
+        className={styles.onlineInfo}
+        hide={!isOnline}
+        vertical
       >
-        Скопировать ссылку
-      </Button>
-    </div>
-  ) : null;
-});
-
-const Info: FC<Props> = () => (
-  <div className={styles.root}>
-    <OnlineInfoBlock />
-    <div className={styles.settingsWrapper}>
-      <div className={styles.turn}>
         <FirstInfoBlock />
         <SecondInfoBlock />
-      </div>
-      <div className={styles.shortSettings}>
-        <ThirdInfoBlock />
-        <FourthInfoBlock />
-      </div>
-    </div>
-  </div>
-);
+      </Row>
+      <Row className={styles.settingsWrapper}>
+        <Row className={styles.turn} vertical>
+          <ThirdInfoBlock />
+          <FourthInfoBlock />
+        </Row>
+        <Row className={styles.shortSettings} vertical>
+          <FifthInfoBlock />
+          <SixthInfoBlock />
+        </Row>
+      </Row>
+    </Row>
+  );
+};
 
 export default Info;

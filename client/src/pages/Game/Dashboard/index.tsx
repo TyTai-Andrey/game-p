@@ -1,6 +1,3 @@
-// vendor imports
-import { useShallow } from 'zustand/react/shallow';
-
 // react
 import React, { FC } from 'react';
 
@@ -16,21 +13,9 @@ import useStore from '@store/index';
 export type Props = {};
 
 const Dashboard: FC<Props> = () => {
-  const {
-    dashboardSize,
-    position,
-    finishedIndexes,
-  } = useStore(useShallow(
-    ({
-      dashboardSize,
-      position,
-      finishedIndexes,
-    }) => ({
-      dashboardSize,
-      position,
-      finishedIndexes,
-    }),
-  ));
+  const dashboardSize = useStore(state => state.dashboardSize);
+  const position = useStore(state => state.position);
+  const finishedIndexes = useStore(state => state.finishedIndexes);
 
   return (
     <div

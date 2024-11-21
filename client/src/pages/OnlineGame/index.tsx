@@ -1,5 +1,5 @@
 // react
-import { FC, useEffect, useLayoutEffect, useMemo } from 'react';
+import { FC, useLayoutEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 // styles
@@ -8,8 +8,8 @@ import styles from '@pages/Game/Game.module.scss';
 // components
 import Aside from '@pages/Game/Aside';
 import AuthenticationModal from '@components/modals/AuthenticationModal';
-import Button from '@components/Button';
 import Dashboard from '@pages/Game/Dashboard';
+import ErrorInfo from '@pages/OnlineGame/ErrorInfo';
 import Loader from '@components/Loader';
 
 // constants
@@ -38,7 +38,7 @@ const OnlineGame: FC<Props> = () => {
   const { id: gameId } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (gameId) {
       openSocket(gameId);
       setState({ lastOnlineGame: gameId });
@@ -58,26 +58,15 @@ const OnlineGame: FC<Props> = () => {
   }, [isAuthenticated, gameId]);
 
   const content = useMemo(() => {
-    if (!gameId || connected) {
-      return (
-        <>
-          <Dashboard />
-          <Aside />
-        </>
-      );
-    }
-
-    if (error) {
-      return (
-        <div className={styles.error}>
-          <p>Данная игра недоступна или была удалена</p>
-          <Button onClick={() => navigate(pathnames.settings)}>Перейти к настройкам</Button>
-        </div>
-      );
-    }
-
-    return <Loader className={styles.loader} />;
-  }, [connected, error, gameId]);
+    if (error) return <ErrorInfo />;
+    if (!connected) return <Loader className={styles.loader} />;
+    return (
+      <>
+        <Dashboard />
+        <Aside />
+      </>
+    );
+  }, [connected, error]);
 
   return (
     <div className={styles.root}>
