@@ -1,6 +1,14 @@
 .root {
   font-size: 2em;
   
+  @media  (max-width: 600px) {
+    font-size: 1.5em;
+  }
+
+  @media  (max-width: 400px) {
+    font-size: 1em;
+  }
+
   &.X {
     color: rgb(222, 64, 236);
   }

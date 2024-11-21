@@ -25,12 +25,13 @@
     position: absolute;
     color: rgba(128, 128, 128, 0.24);
     font-size: 2em;
-  }
 
-  @media (max-width: 650px) {
-    .cellIndex {
-    font-size: 1.5em;
-
+    @media  (max-width: 600px) {
+      font-size: 1.2em;
+    }
+  
+    @media  (max-width: 400px) {
+      font-size: 1em;
     }
   }
 }

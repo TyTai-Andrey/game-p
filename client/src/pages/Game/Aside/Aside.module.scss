@@ -8,6 +8,11 @@
   align-items: center;
 
   @media (max-width: 1300px) {
+    height: initial;
     padding: 20px;
+  }
+  
+  @media  (max-width: 650px) {
+    padding: 20px 0px 0px 0px;
   }
 }
