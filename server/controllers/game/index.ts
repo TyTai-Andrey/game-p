@@ -61,6 +61,8 @@ const GameController: IGameController = {
         isFinished: null,
         finishedIndexes: null,
         owner: userId,
+        maxTurnCount: -1,
+        turnCount: -1,
       });
 
       const savedGame = await game.save();
