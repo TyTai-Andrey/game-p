@@ -12,23 +12,9 @@ function addExtraPropsChildren<T extends object>(
       return React.cloneElement<any>(child, {
         ...child.props,
         ...props,
-        // children: addExtraPropsChildren(child.props.children, props),
       });
     }
 
-    // if (typeof child.props.children === 'object') {
-    //   return React.cloneElement<any>(child, {
-    //     ...child.props,
-    //     children: addExtraPropsChildren(child.props.children, props),
-    //   });
-    // }
-
-    // if (typeof child.type !== 'string') {
-    //   return React.cloneElement<any>(child, {
-    //     ...child.props,
-    //     ...props,
-    //   });
-    // }
     return React.cloneElement<any>(child, {
       ...(child.props ?? {}),
     });

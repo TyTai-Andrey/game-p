@@ -147,6 +147,7 @@ const makeFormStore = <T extends string>(settings: SettingsForm<T>, formName?: s
 };
 
 type FormType = ReturnType<typeof makeFormStore>;
+type FormValues<T extends FormType = FormType> = ReturnType<T['getState']>['values'];
 
-export type { FormType, SettingsForm, FieldFormValue };
+export type { FormType, SettingsForm, FieldFormValue, FormValues };
 export default makeFormStore;

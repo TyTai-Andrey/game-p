@@ -2,18 +2,21 @@
 import classNames from 'classnames';
 
 // react
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 // utils
-import { FormType } from '@utils/makeFormStore';
-import addExtraPropsChildren from '@utils/addExtraPropsChildren';
+import { FormType, FormValues } from '@utils/makeFormStore';
 
 // styles
 import styles from '@components/Form/Form.module.scss';
 
+// components
+import FormItem from '@components/Form/FormItem';
+import FormProvider from './FormProvider';
+
 type OnSubmitFormProps<T extends FormType> = {
   event: React.FormEvent<HTMLFormElement>,
-  values: ReturnType<T['getState']>['values'],
+  values: FormValues<T>,
 };
 
 export interface FormProps<T extends FormType> {
@@ -21,12 +24,14 @@ export interface FormProps<T extends FormType> {
   className?: string,
   onSubmit?: (props: OnSubmitFormProps<T>) => void,
   form?: T
+  initFormValues?: Partial<FormValues<T>>,
 }
 
 const Form = <T extends FormType>({
   children,
   className,
   onSubmit,
+  initFormValues,
   form,
 }: FormProps<T>) => {
   const onSubmitHandler = useCallback((event: React.FormEvent<HTMLFormElement>) => {
@@ -36,14 +41,13 @@ const Form = <T extends FormType>({
 
     const { values } = form?.getState() ?? { values: {} };
     if (onSubmit) onSubmit({ event, values });
-  }, [form, onSubmit]);
+  }, [onSubmit]);
 
-  const elements = useMemo(() => {
-    if (children) {
-      return addExtraPropsChildren(children, { form });
+  useEffect(() => {
+    if (initFormValues && form) {
+      form.getState().setValues(initFormValues);
     }
-    return children;
-  }, []);
+  }, [initFormValues]);
 
   useEffect(() => {
     return () => {
@@ -51,16 +55,30 @@ const Form = <T extends FormType>({
     };
   }, []);
 
+  if (form) {
+    return (
+      <FormProvider form={form}>
+        <form
+          className={classNames(styles.root, className)}
+          onSubmit={onSubmitHandler}
+        >
+          {children}
+        </form>
+      </FormProvider>
+    );
+  }
+
   return (
     <form
       className={classNames(styles.root, className)}
       onSubmit={onSubmitHandler}
     >
-      {elements}
+      {children}
     </form>
   );
 };
 
-export type { OnSubmitFormProps };
+Form.Item = FormItem;
 
+export type { OnSubmitFormProps };
 export default Form;

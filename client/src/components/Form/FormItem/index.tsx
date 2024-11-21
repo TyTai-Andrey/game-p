@@ -1,34 +1,36 @@
 // react
-import { FC, cloneElement, isValidElement, memo, useCallback, useMemo } from 'react';
+import { FC, cloneElement, isValidElement, memo, useCallback, useContext, useMemo } from 'react';
 
 // utils
-import { FieldFormValue, FormType } from '@utils/makeFormStore';
+import { FieldFormValue, FormType, SettingsForm } from '@utils/makeFormStore';
+import { FormContext } from '../FormProvider';
 
 type Props = {
   children: React.ReactNode;
   form?: FormType
   name: string
   dataType?: string
-  valueType?: 'string' | 'boolean' | 'number'
+  valueType?: SettingsForm[string]['valueType']
   onChange?: (value: FieldFormValue) => void
   needValidate?: boolean
 };
 
 const FormItem: FC<Props> & { dataType?: string } = memo(({
   children,
-  form,
   name,
   valueType,
   onChange,
   needValidate,
 }) => {
+  const { form } = useContext(FormContext);
   const value = form?.(state => state.values[name]);
   const error = form?.(state => state.errors[name]);
   const setValues = form?.(state => state.setValues);
   const setErrors = form?.(state => state.setErrors);
 
   const _onChange = useCallback((value: FieldFormValue) => {
-    setErrors?.({ [name]: '' });
+    const isValid = form?.getState()?.isValid ?? true;
+    if (!isValid) setErrors?.({ [name]: '' });
     if (onChange) {
       onChange(value);
     } else {
@@ -67,7 +69,5 @@ const FormItem: FC<Props> & { dataType?: string } = memo(({
 
   return element;
 }, (prevProps, nextProps) => prevProps.name === nextProps.name);
-
-FormItem.dataType = 'FormItem';
 
 export default FormItem;

@@ -2,14 +2,13 @@
 import { useShallow } from 'zustand/react/shallow';
 
 // react
-import React, { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // components
 import Form, { OnSubmitFormProps } from '@components/Form';
 import Buttons from '@pages/Settings/Buttons';
 import Checkbox from '@components/Checkbox';
-import FormItem from '@components/Form/FormItem';
 import Input from '@components/Input';
 
 // styles
@@ -20,16 +19,17 @@ import { SettingsState } from '@store/types/settings';
 import useStore from '@store/index';
 
 // utils
-import makeFormStore, { FieldFormValue } from '@utils/makeFormStore';
+import { FieldFormValue, SettingsForm } from '@utils/makeFormStore';
 
 // constants
 import pathnames from '@constants/pathnames';
 
-// api
+// hooks
+import useForm from '@hooks/useForm';
 
 type Props = {};
 
-const useForm = makeFormStore({
+const formSettings: SettingsForm = {
   dashboardSize: {
     defaultValidators: ['required'],
     max: 9,
@@ -39,7 +39,7 @@ const useForm = makeFormStore({
   itemsForWin: { defaultValidators: ['required'], valueType: 'number' },
   unfairPlay: { defaultValidators: ['required'], valueType: 'boolean' },
   firstTurnSymbol: { initValue: true, defaultValidators: ['required'], valueType: 'boolean' },
-}, 'settingsForm');
+};
 
 const formattedValues = (values: any, isOnline?: boolean): SettingsState => ({
   ...values,
@@ -48,8 +48,9 @@ const formattedValues = (values: any, isOnline?: boolean): SettingsState => ({
 });
 
 const Settings: FC<Props> = () => {
+  const form = useForm('settingsForm', formSettings);
   const navigate = useNavigate();
-  const setValues = useForm(state => state.setValues);
+  const setValues = form(state => state.setValues);
   const setSettings = useStore(state => state.setSettings);
   const initFormValues = useStore(useShallow(
     ({
@@ -63,12 +64,8 @@ const Settings: FC<Props> = () => {
     }),
   ));
 
-  useEffect(() => {
-    setValues(initFormValues);
-  }, [initFormValues]);
-
   const onChangeItemsForWin = useCallback((value: FieldFormValue) => {
-    const { dashboardSize } = useForm.getState().values;
+    const { dashboardSize } = form.getState().values;
     const newValues = {
       itemsForWin: value,
       ...((Number(dashboardSize) < Number(value)) ?
@@ -79,7 +76,7 @@ const Settings: FC<Props> = () => {
   }, []);
 
   const onChangeDashboardSize = useCallback((value: FieldFormValue) => {
-    const { itemsForWin } = useForm.getState().values;
+    const { itemsForWin } = form.getState().values;
     const newValues = {
       dashboardSize: value,
       ...((Number(itemsForWin) > Number(value)) ?
@@ -89,14 +86,19 @@ const Settings: FC<Props> = () => {
     setValues(newValues);
   }, []);
 
-  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof useForm>) => {
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof form>) => {
     setSettings(formattedValues(values));
     navigate(pathnames.main);
   }, []);
 
   return (
-    <Form className={styles.root} form={useForm} onSubmit={onSubmit}>
-      <FormItem
+    <Form
+      className={styles.root}
+      form={form}
+      initFormValues={initFormValues}
+      onSubmit={onSubmit}
+    >
+      <Form.Item
         name="dashboardSize"
         onChange={onChangeDashboardSize}
         valueType="number"
@@ -106,8 +108,8 @@ const Settings: FC<Props> = () => {
           name="dashboardSize"
           type="number"
         />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         name="itemsForWin"
         onChange={onChangeItemsForWin}
         valueType="number"
@@ -117,20 +119,20 @@ const Settings: FC<Props> = () => {
           name="itemsForWin"
           type="number"
         />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         name="unfairPlay"
         valueType="boolean"
       >
         <Checkbox label="Нечестная игра (позволяет ставить фигуру на фигуру противника)" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         name="firstTurnSymbol"
         valueType="boolean"
       >
         <Checkbox label="Начать за крестики" />
-      </FormItem>
-      <Buttons form={useForm} formattedValues={formattedValues} />
+      </Form.Item>
+      <Buttons formattedValues={formattedValues} />
     </Form>
   );
 };

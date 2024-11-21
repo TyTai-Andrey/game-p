@@ -40,7 +40,6 @@ const AuthController: IAuthController = {
 
       res.json({ token, refreshToken, userId: user.id });
     } catch (error) {
-      console.log(error);
       createDefaultError(res);
     }
   },
@@ -65,7 +64,6 @@ const AuthController: IAuthController = {
       await User.findOneAndUpdate({ _id: user.id }, { token, refreshToken });
       res.json({ token, refreshToken, userId: user.id });
     } catch (error) {
-      console.log(error);
       createDefaultError(res);
     }
   },
@@ -75,7 +73,6 @@ const AuthController: IAuthController = {
       await User.findOneAndUpdate({ _id: userId }, { token: '', refreshToken: '' });
       res.json({ success: true });
     } catch (error) {
-      console.log(error);
       createDefaultError(res);
     }
   },
@@ -94,7 +91,6 @@ const AuthController: IAuthController = {
       await User.findOneAndUpdate({ _id: user.id }, { token, refreshToken });
       res.json({ token, refreshToken, userId: user.id });
     } catch (error) {
-      console.log(error);
       createDefaultError(res);
     }
   },

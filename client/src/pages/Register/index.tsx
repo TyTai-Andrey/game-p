@@ -6,7 +6,6 @@ import mailValidator from '@constants/validators';
 
 // utils
 import isResponse from '@utils/check-types';
-import makeFormStore from '@utils/makeFormStore';
 
 // styles
 import styles from '@pages/Register/Register.module.scss';
@@ -14,7 +13,6 @@ import styles from '@pages/Register/Register.module.scss';
 // components
 import Form, { OnSubmitFormProps } from '@components/Form';
 import Buttons from '@pages/Register/Buttons';
-import FormItem from '@components/Form/FormItem';
 import Input from '@components/Input';
 
 // api
@@ -24,24 +22,26 @@ import pathnames from '@constants/pathnames';
 // store
 import useStore from '@store/index';
 
-const useForm = makeFormStore({
-  email: {
-    defaultValidators: ['required'],
-    valueType: 'string',
-    pattern: { regexp: mailValidator, message: 'Это не email' },
-  },
-  password: { defaultValidators: ['required'], valueType: 'string', minLength: 6 },
-  repeatPassword: { defaultValidators: ['required'], valueType: 'string', minLength: 6, equalTo: 'password' },
-}, 'registerForm');
+// hooks
+import useForm from '@hooks/useForm';
 
 const Register = () => {
+  const form = useForm('registerForm', {
+    email: {
+      defaultValidators: ['required'],
+      valueType: 'string',
+      pattern: { regexp: mailValidator, message: 'Это не email' },
+    },
+    password: { defaultValidators: ['required'], valueType: 'string', minLength: 6 },
+    repeatPassword: { defaultValidators: ['required'], valueType: 'string', minLength: 6, equalTo: 'password' },
+  });
   const navigate = useNavigate();
 
   const setAuthData = useStore(state => state.setAuthData);
 
   const [error, setError] = useState('');
 
-  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof useForm>) => {
+  const onSubmit = useCallback(({ values }: OnSubmitFormProps<typeof form>) => {
     AuthApi.register({
       email: String(values.email),
       password: String(values.password),
@@ -57,8 +57,8 @@ const Register = () => {
 
   return (
     <div className={styles.root}>
-      <Form className={styles.form} form={useForm} onSubmit={onSubmit}>
-        <FormItem name="email" needValidate={false}>
+      <Form className={styles.form} form={form} onSubmit={onSubmit}>
+        <Form.Item name="email" needValidate={false}>
           <Input
             autoComplete="email"
             autoCorrect="off"
@@ -67,8 +67,8 @@ const Register = () => {
             label="Email"
             required
           />
-        </FormItem>
-        <FormItem name="password" needValidate={false}>
+        </Form.Item>
+        <Form.Item name="password" needValidate={false}>
           <Input
             autoComplete="password"
             autoCorrect="off"
@@ -77,8 +77,8 @@ const Register = () => {
             label="Пароль"
             required
           />
-        </FormItem>
-        <FormItem name="repeatPassword" needValidate={false}>
+        </Form.Item>
+        <Form.Item name="repeatPassword" needValidate={false}>
           <Input
             autoComplete="repeatPassword"
             autoCorrect="off"
@@ -87,7 +87,7 @@ const Register = () => {
             label="Повторите пароль"
             required
           />
-        </FormItem>
+        </Form.Item>
         {error && <div className={styles.error}>{error}</div>}
         <Buttons />
       </Form>

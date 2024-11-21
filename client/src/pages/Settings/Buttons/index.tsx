@@ -1,9 +1,10 @@
 // react
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // components
 import Button from '@components/Button';
+import { FormContext } from '@components/Form/FormProvider';
 
 // styles
 import styles from '@pages/Settings/Settings.module.scss';
@@ -15,7 +16,6 @@ import pathnames from '@constants/pathnames';
 import GameApi from '@api/GameApi';
 
 // utils
-import { FormType } from '@utils/makeFormStore';
 import isResponse from '@utils/check-types';
 
 // store
@@ -24,13 +24,15 @@ import useStore from '@store/index';
 
 type Props = {
   formattedValues: (values: any, isOnline?: boolean) => SettingsState
-  form: FormType
 };
 
-const Buttons: FC<Props> = ({ formattedValues, form }) => {
+const Buttons: FC<Props> = ({ formattedValues }) => {
+  const { form } = useContext(FormContext);
   const navigate = useNavigate();
-  const setSettings = useStore(state => state.setSettings);
+
   const isAuthenticated = useStore(state => state.isAuthenticated);
+  const setSettings = useStore(state => state.setSettings);
+
   const onCreateGame = useCallback(async () => {
     const { values } = form.getState();
     const response = await GameApi.create(formattedValues(values));
@@ -40,6 +42,7 @@ const Buttons: FC<Props> = ({ formattedValues, form }) => {
       navigate(`${pathnames.onlineGame}${response.gameId}`);
     }
   }, []);
+
   return (
     <div className={styles.buttons}>
       <Button type="submit">Начать игру</Button>
@@ -47,7 +50,8 @@ const Buttons: FC<Props> = ({ formattedValues, form }) => {
         disabled={!isAuthenticated}
         onClick={onCreateGame}
         type="button"
-      >Начать игру с другом
+      >
+        Начать игру с другом
       </Button>
     </div>
   );
