@@ -1,5 +1,5 @@
 // styles
-import styles from '@pages/Game/Aside/Aside.module.scss';
+import styles from '@pages/Game/Aside/History/History.module.scss';
 
 // store
 import useStore from '@store/index';
@@ -10,7 +10,7 @@ import HistoryItem from '@pages/Game/Aside/HistoryItem';
 const History = () => {
   const history = useStore(state => state.history);
   return (
-    <div className={styles.history}>
+    <div className={styles.root}>
       <h1>История ходов</h1>
       <div className={styles.historyTurns}>
         {

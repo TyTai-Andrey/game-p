@@ -8,7 +8,7 @@ import { IHistoryItem } from '@store/types/game';
 import Symbol from '@components/Symbol';
 
 // styles
-import styles from '@pages/Game/Aside/Aside.module.scss';
+import styles from '@pages/Game/Aside/HistoryItem/HistoryItem.module.scss';
 import useStore from '@store/index';
 
 type Props = {
@@ -22,14 +22,14 @@ const HistoryItem: FC<Props> = memo(({ item, index }) => {
 
   return (
     <div
-      className={styles.historyTurn}
+      className={styles.root}
       key={`${item.position}`}
     >
       {index + 1}.
       <Symbol symbol={item.turnCount % 2 ? secondTurnSymbol : firstTurnSymbol} />
-      <span>
+      <p>
         {item.cellIndex + 1}
-      </span>
+      </p>
     </div>
   );
 });

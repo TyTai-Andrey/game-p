@@ -1,18 +1,13 @@
-// vendor imports
-import classNames from 'classnames';
-
 // react
 import React, { useCallback, useEffect } from 'react';
 
 // utils
 import { FormType, FormValues } from '@utils/makeFormStore';
 
-// styles
-import styles from '@components/Form/Form.module.scss';
-
 // components
 import FormItem from '@components/Form/FormItem';
-import FormProvider from '../providers/FormProvider';
+import FormProvider from '@components/providers/FormProvider';
+import Row from '@components/Row';
 
 type OnSubmitFormProps<T extends FormType> = {
   event: React.FormEvent<HTMLFormElement>,
@@ -59,10 +54,12 @@ const Form = <T extends FormType>({
     return (
       <FormProvider form={form}>
         <form
-          className={classNames(styles.root, className)}
+          className={className}
           onSubmit={onSubmitHandler}
         >
-          {children}
+          <Row vertical>
+            {children}
+          </Row>
         </form>
       </FormProvider>
     );
@@ -70,10 +67,12 @@ const Form = <T extends FormType>({
 
   return (
     <form
-      className={classNames(styles.root, className)}
+      className={className}
       onSubmit={onSubmitHandler}
     >
-      {children}
+      <Row vertical>
+        {children}
+      </Row>
     </form>
   );
 };

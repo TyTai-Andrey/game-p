@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@components/Button';
 
 // styles
-import styles from '@components/modals/AuthenticationModal/AuthenticationModal.module.scss';
+import styles from '@components/modals/AuthenticationModal/Buttons/Buttons.module.scss';
 
 // constants
 import pathnames from '@constants/pathnames';
@@ -23,7 +23,7 @@ const Buttons: FC<Props> = ({ handleClose }) => {
   }, []);
 
   return (
-    <div className={styles.buttons}>
+    <div className={styles.root}>
       <Button onClick={onRegister} variant="text">Нет аккаунта ?</Button>
       <Button type="submit">Войти</Button>
     </div>

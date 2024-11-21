@@ -7,7 +7,7 @@ import Button from '@components/Button';
 import { FormContext } from '@components/providers/FormProvider';
 
 // styles
-import styles from '@pages/Settings/Settings.module.scss';
+import styles from '@pages/Settings/Buttons/Buttons.module.scss';
 
 // constants
 import pathnames from '@constants/pathnames';
@@ -44,7 +44,7 @@ const Buttons: FC<Props> = ({ formattedValues }) => {
   }, []);
 
   return (
-    <div className={styles.buttons}>
+    <div className={styles.root}>
       <Button type="submit">Начать игру</Button>
       <Button
         disabled={!isAuthenticated}

@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  
+  span, p {
+    line-height: 36px;
+    font-size: 26px;
+    width: 26px;
+  }
+
+  span {
+    font-weight: 600;
+  }
+}
