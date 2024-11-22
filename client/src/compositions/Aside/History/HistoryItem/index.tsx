@@ -8,7 +8,9 @@ import { IHistoryItem } from '@store/types/game';
 import Symbol from '@components/Symbol';
 
 // styles
-import styles from '@pages/Game/Aside/HistoryItem/HistoryItem.module.scss';
+import styles from '@compositions/Aside/History/HistoryItem/HistoryItem.module.scss';
+
+// store
 import useStore from '@store/index';
 
 type Props = {

@@ -7,6 +7,7 @@ module.exports = {
         alias: {
             '@api': `${PATH_SRC}/api/`,
             '@components': `${PATH_SRC}/components/`,
+            '@compositions': `${PATH_SRC}/compositions/`,
             '@constants': `${PATH_SRC}/constants/`,
             '@hooks': `${PATH_SRC}/hooks/`,
             '@pages': `${PATH_SRC}/pages/`,

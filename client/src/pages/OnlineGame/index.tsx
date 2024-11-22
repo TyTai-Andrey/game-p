@@ -6,11 +6,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styles from '@pages/Game/Game.module.scss';
 
 // components
-import Aside from '@pages/Game/Aside';
 import AuthenticationModal from '@components/modals/AuthenticationModal';
-import Dashboard from '@pages/Game/Dashboard';
 import ErrorInfo from '@pages/OnlineGame/ErrorInfo';
 import Loader from '@components/Loader';
+
+// compositions
+import Aside from '@compositions/Aside';
+import Dashboard from '@compositions/Dashboard';
 
 // constants
 import pathnames from '@constants/pathnames';

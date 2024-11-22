@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { memo } from 'react';
 
 // styles
-import styles from '@pages/Game/Aside/Info/Info.module.scss';
+import styles from '@compositions/Aside/Info/Info.module.scss';
 
 // store
 import useStore from '@store/index';

@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import React, { FC, useCallback } from 'react';
 
 // styles
-import styles from '@pages/Game/Dashboard/Cell/Cell.module.scss';
+import styles from '@compositions/Dashboard/Cell/Cell.module.scss';
 
 // store
 import useStore from '@store/index';

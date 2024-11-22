@@ -1,12 +1,14 @@
+// vendor imports
+import classNames from 'classnames';
+
 // styles
-import styles from '@pages/Game/Aside/History/History.module.scss';
+import styles from '@compositions/Aside/History/History.module.scss';
 
 // store
 import useStore from '@store/index';
 
 // components
-import HistoryItem from '@pages/Game/Aside/HistoryItem';
-import classNames from 'classnames';
+import HistoryItem from '@compositions/Aside/History/HistoryItem';
 
 const History = () => {
   const history = useStore(state => state.history);

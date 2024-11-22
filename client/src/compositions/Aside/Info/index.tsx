@@ -1,21 +1,20 @@
-/* eslint-disable sort-imports */
 // react
 import { FC } from 'react';
 
 // styles
-import styles from '@pages/Game/Aside/Info/Info.module.scss';
+import styles from '@compositions/Aside/Info/Info.module.scss';
 
 // store
 import useStore from '@store/index';
 
 // components
+import ClientsOnlineInfoBlock from '@compositions/Aside/Info/InfoBlocks/ClientsOnlineInfoBlock';
+import CopyLinkInfoBlock from '@compositions/Aside/Info/InfoBlocks/CopyLinkInfoBlock';
+import FirstTurnSymbolInfoBlock from '@compositions/Aside/Info/InfoBlocks/FirstTurnSymbolInfoBlock';
+import ItemsForWinInfoBlock from '@compositions/Aside/Info/InfoBlocks/ItemsForWinInfoBlock';
 import Row from '@components/Row';
-import ClientsOnlineInfoBlock from '@pages/Game/Aside/InfoBlocks/ClientsOnlineInfoBlock';
-import CopyLinkInfoBlock from '@pages/Game/Aside/InfoBlocks/CopyLinkInfoBlock';
-import TurnSymbolInfoBlock from '@pages/Game/Aside/InfoBlocks/TurnSymbolInfoBlock';
-import FirstTurnSymbolInfoBlock from '@pages/Game/Aside/InfoBlocks/FirstTurnSymbolInfoBlock';
-import UnfairPlayInfoBlock from '@pages/Game/Aside/InfoBlocks/UnfairPlayInfoBlock';
-import ItemsForWinInfoBlock from '@pages/Game/Aside/InfoBlocks/ItemsForWinInfoBlock';
+import TurnSymbolInfoBlock from '@compositions/Aside/Info/InfoBlocks/TurnSymbolInfoBlock';
+import UnfairPlayInfoBlock from '@compositions/Aside/Info/InfoBlocks/UnfairPlayInfoBlock';
 
 type Props = {};
 

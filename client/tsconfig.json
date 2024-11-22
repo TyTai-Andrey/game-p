@@ -26,6 +26,9 @@
       "@components/*": [
         "./src/components/*"
       ],
+      "@compositions/*": [
+        "./src/compositions/*"
+      ],
       "@constants/*": [
         "./src/constants/*"
       ],

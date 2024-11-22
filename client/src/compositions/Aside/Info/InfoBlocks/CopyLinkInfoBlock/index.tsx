@@ -6,7 +6,7 @@ import { memo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // styles
-import styles from '@pages/Game/Aside/Info/Info.module.scss';
+import styles from '@compositions/Aside/Info/Info.module.scss';
 
 // components
 import Button from '@components/Button';

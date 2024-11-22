@@ -4,9 +4,9 @@ import { FC } from 'react';
 // styles
 import styles from '@pages/Game/Game.module.scss';
 
-// components
-import Aside from '@pages/Game/Aside';
-import Dashboard from '@pages/Game/Dashboard';
+// compositions
+import Aside from '@compositions/Aside';
+import Dashboard from '@compositions/Dashboard';
 
 export type Props = {};
 
