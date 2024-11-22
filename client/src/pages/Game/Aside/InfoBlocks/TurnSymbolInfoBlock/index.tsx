@@ -10,7 +10,7 @@ import useStore from '@store/index';
 // components
 import Symbol from '@components/Symbol';
 
-const ThirdInfoBlock = memo(() => {
+const TurnSymbolInfoBlock = memo(() => {
   const isFinished = useStore(state => state.isFinished);
   const turnSymbol = useStore(state => state.turnSymbol);
 
@@ -26,4 +26,4 @@ const ThirdInfoBlock = memo(() => {
   );
 });
 
-export default ThirdInfoBlock;
+export default TurnSymbolInfoBlock;

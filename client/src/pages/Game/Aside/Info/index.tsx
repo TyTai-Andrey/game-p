@@ -10,12 +10,12 @@ import useStore from '@store/index';
 
 // components
 import Row from '@components/Row';
-import FirstInfoBlock from '@pages/Game/Aside/Info/FirstInfoBlock';
-import SecondInfoBlock from '@pages/Game/Aside/Info/SecondInfoBlock';
-import ThirdInfoBlock from '@pages/Game/Aside/Info/ThirdInfoBlock';
-import FourthInfoBlock from '@pages/Game/Aside/Info/FourthInfoBlock';
-import FifthInfoBlock from '@pages/Game/Aside/Info/FifthInfoBlock';
-import SixthInfoBlock from '@pages/Game/Aside/Info/SixthInfoBlock';
+import ClientsOnlineInfoBlock from '@pages/Game/Aside/InfoBlocks/ClientsOnlineInfoBlock';
+import CopyLinkInfoBlock from '@pages/Game/Aside/InfoBlocks/CopyLinkInfoBlock';
+import TurnSymbolInfoBlock from '@pages/Game/Aside/InfoBlocks/TurnSymbolInfoBlock';
+import FirstTurnSymbolInfoBlock from '@pages/Game/Aside/InfoBlocks/FirstTurnSymbolInfoBlock';
+import UnfairPlayInfoBlock from '@pages/Game/Aside/InfoBlocks/UnfairPlayInfoBlock';
+import ItemsForWinInfoBlock from '@pages/Game/Aside/InfoBlocks/ItemsForWinInfoBlock';
 
 type Props = {};
 
@@ -29,17 +29,17 @@ const Info: FC<Props> = () => {
         hide={!isOnline}
         vertical
       >
-        <FirstInfoBlock />
-        <SecondInfoBlock />
+        <ClientsOnlineInfoBlock />
+        <CopyLinkInfoBlock />
       </Row>
       <Row className={styles.settingsWrapper}>
         <Row className={styles.turn} vertical>
-          <ThirdInfoBlock />
-          <FourthInfoBlock />
+          <TurnSymbolInfoBlock />
+          <FirstTurnSymbolInfoBlock />
         </Row>
         <Row className={styles.shortSettings} vertical>
-          <FifthInfoBlock />
-          <SixthInfoBlock />
+          <UnfairPlayInfoBlock />
+          <ItemsForWinInfoBlock />
         </Row>
       </Row>
     </Row>

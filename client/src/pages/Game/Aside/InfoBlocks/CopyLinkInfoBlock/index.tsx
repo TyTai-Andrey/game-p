@@ -12,7 +12,7 @@ import styles from '@pages/Game/Aside/Info/Info.module.scss';
 import Button from '@components/Button';
 import copyTextToClipboard from '@utils/copyTextToClipboard';
 
-const SecondInfoBlock = memo(() => {
+const CopyLinkInfoBlock = memo(() => {
   const location = useLocation();
 
   const onClick = useCallback(() => {
@@ -29,4 +29,4 @@ const SecondInfoBlock = memo(() => {
   );
 });
 
-export default SecondInfoBlock;
+export default CopyLinkInfoBlock;

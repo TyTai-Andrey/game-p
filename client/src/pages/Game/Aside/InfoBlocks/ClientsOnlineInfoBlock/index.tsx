@@ -10,7 +10,7 @@ import styles from '@pages/Game/Aside/Info/Info.module.scss';
 // store
 import useStore from '@store/index';
 
-const FirstInfoBlock = memo(() => {
+const ClientsOnlineInfoBlock = memo(() => {
   const clientsOnline = useStore(state => state.clientsOnline);
 
   return (
@@ -20,4 +20,4 @@ const FirstInfoBlock = memo(() => {
   );
 });
 
-export default FirstInfoBlock;
+export default ClientsOnlineInfoBlock;
